@@ -1,3 +1,4 @@
+import 'package:adminpanelecommerce/storedata/add_category_page.dart';
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -14,37 +15,51 @@ class _MyCategoryPageState extends State<MyCategoryPage> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Text(Constants.category,
-              style: Text_Style.text_Theme(
-                  Constants.black_text, 20, FontWeight.bold)),
-        ),
-        body: Column(
-          children: [
-            TabBar(
-                labelPadding: const EdgeInsets.symmetric(vertical: 14),
-                indicatorColor: const Color(0xffDB3022),
-                unselectedLabelColor: Colors.black,
-                unselectedLabelStyle: Text_Style.text_Theme(
-                    Constants.black_text, 16, FontWeight.normal),
-                labelColor: Colors.black,
-                labelStyle: Text_Style.text_Theme(
-                    Constants.black_text, 16, FontWeight.bold),
-                tabs: const [
-                  Text(Constants.men),
-                  Text(Constants.women),
-                  Text(Constants.kide)
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            title: Text(Constants.category,
+                style: Text_Style.text_Theme(
+                    Constants.black_text, 20, FontWeight.bold)),
+          ),
+          body: Column(
+            children: [
+              TabBar(
+                  labelPadding: const EdgeInsets.symmetric(vertical: 14),
+                  indicatorColor: const Color(0xffDB3022),
+                  unselectedLabelColor: Colors.black,
+                  unselectedLabelStyle: Text_Style.text_Theme(
+                      Constants.black_text, 16, FontWeight.normal),
+                  labelColor: Colors.black,
+                  labelStyle: Text_Style.text_Theme(
+                      Constants.black_text, 16, FontWeight.bold),
+                  tabs: const [
+                    Text(Constants.men),
+                    Text(Constants.women),
+                    Text(Constants.kide)
+                  ]),
+              Expanded(
+                child: TabBarView(children: [
+                  listOfCategories(),
+                  listOfCategories(),
+                  listOfCategories(),
                 ]),
-            Expanded(
-              child: TabBarView(children: [
-                listOfCategories(),
-                listOfCategories(),
-                listOfCategories(),
-              ]),
-            )
-          ],
+              )
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.red,
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const MyAddCategory(),
+              ));
+            },
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );
@@ -61,21 +76,18 @@ class _MyCategoryPageState extends State<MyCategoryPage> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: SizedBox(
-                height: MediaQuery.of(context).size.height / 7,
+                height: 105,
                 child: Card(
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: Image.network(
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTamE2X9X7VXv0Y_ce4RiWqJmoZ8AYuMJ5dYg&usqp=CAU",
-                        width: MediaQuery.of(context).size.width / 8,
-                        fit: BoxFit.fill,
-                      ),
+                    Image.network(
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTamE2X9X7VXv0Y_ce4RiWqJmoZ8AYuMJ5dYg&usqp=CAU",
+                      width: 105,
+                      height: 105,
+                      fit: BoxFit.fill,
                     ),
                     Expanded(
-                      flex: 2,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

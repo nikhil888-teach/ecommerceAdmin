@@ -17,6 +17,19 @@ class Constants {
   static const women = "Women";
   static const kide = "Kide";
 
+  //add category page
+  static const addCategory = "Add Category";
+  static const subCategory = "Sub Category";
+
+  //add product page
+  static const addProduct = "Add Product";
+  static const productDetail = "Product Detail";
+  static const productName = "Product Name";
+  static const price = "Price";
+  static const dprice = "Strike-off price";
+  static const brandName = "Brand Name";
+  static const productDesc = "Product Description";
+
   //user page
   static const user = "Users";
 

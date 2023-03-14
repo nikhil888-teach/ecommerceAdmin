@@ -29,6 +29,7 @@ class Constants {
   static const dprice = "Strike-off price";
   static const brandName = "Brand Name";
   static const productDesc = "Product Description";
+  static const selectImageText = "Select Multiple photos of your product";
 
   //user page
   static const user = "Users";

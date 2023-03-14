@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:r_dotted_line_border/r_dotted_line_border.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MyAddProductPage extends StatefulWidget {
   const MyAddProductPage({super.key});
@@ -19,6 +23,8 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   TextEditingController pdprice = TextEditingController();
   TextEditingController pbname = TextEditingController();
   TextEditingController pdesc = TextEditingController();
+  List<XFile>? files;
+  ImagePicker imagePicker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +44,59 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: CircleAvatar(
-                    radius: 80,
-                    child: ClipOval(
-                      child: Image.network(
-                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsynwv-5qtogtOwJbIjaPFJUmHpzhxgqIAug&usqp=CAU',
-                      ),
-                    ),
+                Container(
+                  decoration:
+                      BoxDecoration(border: RDottedLineBorder.all(width: 2)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: files == null
+                        ? Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    Constants.selectImageText,
+                                    style: Text_Style.text_Theme(
+                                        Constants.black_text,
+                                        14,
+                                        FontWeight.bold),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      List<XFile> selectedImages =
+                                          await imagePicker.pickMultiImage();
+                                      setState(() {
+                                        files?.addAll(selectedImages);
+                                      });
+                                    },
+                                    child: const Icon(
+                                      Icons.add_a_photo_outlined,
+                                      color: Colors.red,
+                                      size: 40,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        : Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              files!.length,
+                              (index) => CircleAvatar(
+                                radius: 50,
+                                child: ClipOval(
+                                  child: Image.file(File(files![index].path)),
+                                ),
+                              ),
+                            ),
+                          ),
                   ),
                 ),
                 Padding(

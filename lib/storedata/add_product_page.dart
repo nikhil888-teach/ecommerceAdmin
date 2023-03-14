@@ -5,7 +5,6 @@ import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -30,7 +29,6 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white,
           leadingWidth: 0,
@@ -45,6 +43,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
+                  width: MediaQuery.of(context).size.width,
                   decoration:
                       BoxDecoration(border: RDottedLineBorder.all(width: 2)),
                   child: Padding(
@@ -70,8 +69,9 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                                     onTap: () async {
                                       List<XFile> selectedImages =
                                           await imagePicker.pickMultiImage();
+                                      if (!mounted) return;
                                       setState(() {
-                                        files?.addAll(selectedImages);
+                                        files = selectedImages;
                                       });
                                     },
                                     child: const Icon(
@@ -84,15 +84,28 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                               ],
                             ),
                           )
-                        : Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        : Wrap(
+                            alignment: WrapAlignment.spaceEvenly,
                             children: List.generate(
                               files!.length,
-                              (index) => CircleAvatar(
-                                radius: 50,
+                              (index) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
                                 child: ClipOval(
-                                  child: Image.file(File(files![index].path)),
+                                  child: Container(
+                                    color: Colors.red,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: ClipOval(
+                                        child: Image.file(
+                                          File(files![index].path),
+                                          fit: BoxFit.cover,
+                                          height: 100,
+                                          width: 100,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),

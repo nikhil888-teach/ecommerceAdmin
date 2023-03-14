@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
 class MyAddCategory extends StatefulWidget {
@@ -14,6 +17,8 @@ class MyAddCategory extends StatefulWidget {
 class _MyAddCategoryState extends State<MyAddCategory> {
   String selectCategory = "Male";
   TextEditingController subCategory = TextEditingController();
+  XFile? file;
+  ImagePicker imagePicker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +37,39 @@ class _MyAddCategoryState extends State<MyAddCategory> {
           child: Column(
             children: [
               Center(
-                child: CircleAvatar(
-                  radius: 80,
-                  child: ClipOval(
-                    child: Image.network(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsynwv-5qtogtOwJbIjaPFJUmHpzhxgqIAug&usqp=CAU',
+                child: ClipOval(
+                  child: Container(
+                    color: Colors.red,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: ClipOval(
+                        child: file == null
+                            ? InkWell(
+                                onTap: () async {
+                                  var image = await imagePicker.pickImage(
+                                      source: ImageSource.gallery);
+                                  if (!mounted) return;
+                                  setState(() {
+                                    file = image;
+                                  });
+                                },
+                                child: const SizedBox(
+                                  height: 100,
+                                  width: 100,
+                                  child: Icon(
+                                    Icons.add_a_photo,
+                                    color: Colors.white,
+                                    size: 40,
+                                  ),
+                                ),
+                              )
+                            : Image.file(
+                                File(file!.path),
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                      ),
                     ),
                   ),
                 ),
@@ -67,7 +100,7 @@ class _MyAddCategoryState extends State<MyAddCategory> {
               const SizedBox(
                 height: 8,
               ),
-              Button_Style.button_Theme(Constants.addCategory)
+              InkWell(child: Button_Style.button_Theme(Constants.addCategory))
             ],
           ),
         ),

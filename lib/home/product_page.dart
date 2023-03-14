@@ -44,7 +44,7 @@ class _MyProductPageState extends State<MyProductPage> {
                       ),
                     ),
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         height: 120,
                         child: Padding(
                           padding: const EdgeInsets.only(

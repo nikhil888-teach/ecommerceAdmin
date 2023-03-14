@@ -1,5 +1,6 @@
 import 'package:adminpanelecommerce/home/category_page.dart';
 import 'package:adminpanelecommerce/home/dashboard_page.dart';
+import 'package:adminpanelecommerce/home/myorders/myorder_page.dart';
 import 'package:adminpanelecommerce/home/product_page.dart';
 import 'package:adminpanelecommerce/home/user_page.dart';
 import 'package:adminpanelecommerce/utils/constants.dart';
@@ -18,7 +19,7 @@ class _MyMainPageState extends State<MyMainPage> {
   int currentindex = 0;
   List pagess = <Widget>[
     const MyDashboardPage(),
-    const MyDashboardPage(),
+    const MyOrderPage(),
     const MyProductPage(),
     const MyCategoryPage(),
     const MyUserPage(),

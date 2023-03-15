@@ -4,6 +4,8 @@ import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +21,7 @@ class _MyAddCategoryState extends State<MyAddCategory> {
   TextEditingController subCategory = TextEditingController();
   XFile? file;
   ImagePicker imagePicker = ImagePicker();
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +103,66 @@ class _MyAddCategoryState extends State<MyAddCategory> {
               const SizedBox(
                 height: 8,
               ),
-              InkWell(child: Button_Style.button_Theme(Constants.addCategory))
+              InkWell(
+                  onTap: () {
+                    if (subCategory.text.isNotEmpty) {
+                      setState(() {
+                        loading = true;
+                      });
+                      Reference reference = FirebaseStorage.instance
+                          .ref('/category${subCategory.text}');
+                      UploadTask uploadTask =
+                          reference.putFile(File(file!.path));
+                      Future.value(uploadTask).then((value) {
+                        var imagePath = reference.getDownloadURL();
+
+                        CollectionReference collectionReference =
+                            FirebaseFirestore.instance
+                                .collection(selectCategory);
+                        collectionReference
+                            .doc()
+                            .collection(subCategory.text)
+                            .add({
+                          'subcategory': subCategory.text,
+                          'imageurl': imagePath
+                        }).then((value) {
+                          setState(() {
+                            loading = false;
+                          });
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(const SnackBar(
+                                content: Text("Category Add successfully")));
+                        }).catchError((onError) {
+                          setState(() {
+                            loading = false;
+                          });
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(SnackBar(content: Text(onError)));
+                        });
+                      }).catchError((onError) {
+                        setState(() {
+                          loading = false;
+                        });
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(
+                              SnackBar(content: Text(onError.toString())));
+                      });
+                    } else {
+                      setState(() {
+                        loading = false;
+                      });
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(const SnackBar(
+                            content: Text("Please fill sub Category Field")));
+                    }
+                  },
+                  child: loading == true
+                      ? const Center(child: CircularProgressIndicator())
+                      : Button_Style.button_Theme(Constants.addCategory))
             ],
           ),
         ),

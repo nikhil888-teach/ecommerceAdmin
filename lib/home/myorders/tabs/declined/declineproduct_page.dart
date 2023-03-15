@@ -310,27 +310,6 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const MyDeclinedProduct(),
-                        ));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 15),
-                        child: Text(
-                          Constants.reorder,
-                          style: Text_Style.text_Theme(
-                              Constants.black_text, 17, FontWeight.w600),
-                        ),
-                      )),
-                  Button_Style.button_Theme(Constants.lea_feed)
-                ],
-              )
             ],
           ),
         ),

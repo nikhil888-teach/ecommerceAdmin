@@ -99,11 +99,57 @@ class _MyOrderedState extends State<MyOrdered> {
                               style: Text_Style.text_Theme(
                                   Constants.black_text, 15, FontWeight.w600),
                             )),
-                        const Text(Constants.orders,
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold))
+                        Row(
+                          children: [
+                            ElevatedButton(
+                                style: ButtonStyle(
+                                    textStyle: MaterialStatePropertyAll(
+                                        Text_Style.text_Theme(
+                                            Constants.white_text,
+                                            14,
+                                            FontWeight.normal)),
+                                    backgroundColor:
+                                        const MaterialStatePropertyAll(
+                                            Colors.green),
+                                    iconColor: const MaterialStatePropertyAll(
+                                        Colors.white)),
+                                onPressed: () {},
+                                child: Row(
+                                  children: const [
+                                    Icon(Icons.check),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(Constants.accepted)
+                                  ],
+                                )),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            ElevatedButton(
+                                style: ButtonStyle(
+                                    textStyle: MaterialStatePropertyAll(
+                                        Text_Style.text_Theme(
+                                            Constants.white_text,
+                                            14,
+                                            FontWeight.normal)),
+                                    backgroundColor:
+                                        const MaterialStatePropertyAll(
+                                            Colors.red),
+                                    iconColor: const MaterialStatePropertyAll(
+                                        Colors.white)),
+                                onPressed: () {},
+                                child: Row(
+                                  children: const [
+                                    Icon(Icons.close),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(Constants.declined)
+                                  ],
+                                ))
+                          ],
+                        )
                       ],
                     ),
                   )

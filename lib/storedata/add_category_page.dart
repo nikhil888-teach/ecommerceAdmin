@@ -5,6 +5,7 @@ import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +86,7 @@ class _MyAddCategoryState extends State<MyAddCategory> {
                       border: OutlineInputBorder(borderSide: BorderSide.none)),
                   value: selectCategory,
                   icon: const Icon(Icons.keyboard_arrow_down),
-                  items: <String>['Male', 'Female', 'Kide']
+                  items: <String>['Male', 'Female', 'Kids']
                       .map<DropdownMenuItem<String>>((e) {
                     return DropdownMenuItem(value: e, child: Text(e));
                   }).toList(),
@@ -110,37 +111,13 @@ class _MyAddCategoryState extends State<MyAddCategory> {
                         loading = true;
                       });
                       Reference reference = FirebaseStorage.instance
-                          .ref('/category${subCategory.text}');
+                          .ref('/category/${subCategory.text}');
                       UploadTask uploadTask =
                           reference.putFile(File(file!.path));
-                      Future.value(uploadTask).then((value) {
-                        var imagePath = reference.getDownloadURL();
-
-                        CollectionReference collectionReference =
-                            FirebaseFirestore.instance
-                                .collection(selectCategory);
-                        collectionReference
-                            .doc()
-                            .collection(subCategory.text)
-                            .add({
-                          'subcategory': subCategory.text,
-                          'imageurl': imagePath
-                        }).then((value) {
-                          setState(() {
-                            loading = false;
-                          });
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(const SnackBar(
-                                content: Text("Category Add successfully")));
-                        }).catchError((onError) {
-                          setState(() {
-                            loading = false;
-                          });
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(SnackBar(content: Text(onError)));
-                        });
+                      Future.value(uploadTask).then((value) async {
+                        var imagePath = await reference.getDownloadURL();
+                        addCategoryToDatabase(selectCategory, subCategory.text,
+                            imagePath.toString());
                       }).catchError((onError) {
                         setState(() {
                           loading = false;
@@ -161,12 +138,46 @@ class _MyAddCategoryState extends State<MyAddCategory> {
                     }
                   },
                   child: loading == true
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                          color: Colors.red,
+                        ))
                       : Button_Style.button_Theme(Constants.addCategory))
             ],
           ),
         ),
       ),
     );
+  }
+
+  void addCategoryToDatabase(
+      String selectcategory, String subcategory, String imagePath) async {
+    DatabaseReference databaseReference =
+        FirebaseDatabase.instance.ref(selectcategory);
+    await databaseReference
+        .child(Constants.dsubcategory)
+        .child(subcategory)
+        .set({
+      Constants.dSubCategoryImage: imagePath,
+      Constants.dSubCategoryName: subcategory,
+    }).then((value) {
+      setState(() {
+        loading = false;
+      });
+      file = null;
+      selectCategory = "Male";
+      subCategory.clear();
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+            const SnackBar(content: Text("Category Added Successfull")));
+    }).catchError((onError) {
+      setState(() {
+        loading = false;
+      });
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(onError.toString())));
+    });
   }
 }

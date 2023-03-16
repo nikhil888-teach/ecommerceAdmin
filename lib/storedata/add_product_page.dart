@@ -149,7 +149,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                             OutlineInputBorder(borderSide: BorderSide.none)),
                     value: selectCategory,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items: <String>['Male', 'Female', 'Kide']
+                    items: <String>['Male', 'Female', 'Kids']
                         .map<DropdownMenuItem<String>>((e) {
                       return DropdownMenuItem(value: e, child: Text(e));
                     }).toList(),

@@ -4,7 +4,6 @@ import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -154,10 +153,7 @@ class _MyAddCategoryState extends State<MyAddCategory> {
       String selectcategory, String subcategory, String imagePath) async {
     DatabaseReference databaseReference =
         FirebaseDatabase.instance.ref(selectcategory);
-    await databaseReference
-        .child(Constants.dsubcategory)
-        .child(subcategory)
-        .set({
+    await databaseReference.child(subcategory).set({
       Constants.dSubCategoryImage: imagePath,
       Constants.dSubCategoryName: subcategory,
     }).then((value) {

@@ -1,0 +1,25 @@
+{
+    "Men": [
+        {
+            "Clothes": {
+                "ClotheImage": "https://images.unsplash.com/10/fields.jpg?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MXxzZWFyY2h8Mnx8bGF0ZSUyMHN1bW1lcnxlbnwwfHx8fDE2Nzg4NjU4Mzg&ixlib=rb-4.0.3&q=80&w=1080",
+                "ProductList": [
+                    {
+                        "PID": 0,
+                        "pName": "Tshirt",
+                        "Price": "",
+                        "image": [
+                            "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png",
+                            "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png",
+                            "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png",
+                            "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png"
+                        ]
+                    }
+                ]
+            }
+        },
+        {}
+    ],
+    "Women": [],
+    "Kids": []
+}

@@ -4,9 +4,7 @@ import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,9 +25,25 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   TextEditingController pdesc = TextEditingController();
   List<XFile>? files;
   ImagePicker imagePicker = ImagePicker();
+  List<String>? subCategories = [];
+  String selectSubCategory = "Select subcategory";
 
   @override
   Widget build(BuildContext context) {
+    DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
+    databaseReference.child(selectCategory).onValue.listen((event) {
+      Map<dynamic, dynamic>? values =
+          event.snapshot.value as Map<dynamic, dynamic>?;
+      if (values == null && values!.length == 1) {
+        return;
+      }
+      subCategories!.clear();
+      values.forEach((key, value) {
+        subCategories!.add(value[Constants.dSubCategoryName]);
+      });
+      setState(() {});
+    });
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -166,6 +180,32 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                 const SizedBox(
                   height: 8,
                 ),
+                subCategories == null
+                    ? const Text("No Data")
+                    : Card(
+                        color: Colors.white,
+                        elevation: 2,
+                        child: DropdownButtonFormField(
+                          hint: const Text('Select subcategory'),
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none)),
+                          value: null,
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          items: subCategories!
+                              .asMap()
+                              .entries
+                              .map<DropdownMenuItem<String>>((e) {
+                            return DropdownMenuItem(
+                                value: e.value, child: Text(e.value));
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectSubCategory = value!;
+                            });
+                          },
+                        ),
+                      ),
                 const SizedBox(
                   height: 8,
                 ),

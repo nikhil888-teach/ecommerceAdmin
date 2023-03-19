@@ -69,9 +69,18 @@ class Constants {
 //database path name
   static const dSubCategoryImage = "subcgimage";
   static const dSubCategoryName = "subcgName";
+  static const dProducts = "Products";
   static const dMale = "Male";
   static const dFemale = "Female";
   static const dKids = "Kids";
+  static const dimages = "images";
+  static const dPname = "Pname";
+  static const dPrice = "Price";
+  static const ddPrice = "DisPrice";
+  static const dBrand = "Brand";
+  static const dDesc = "Description";
+  static const dcategory = "Category";
+  static const dsubCategory = "SubCategory";
 
   //COLOR
   // ignore: constant_identifier_names

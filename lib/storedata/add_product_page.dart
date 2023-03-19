@@ -1,12 +1,12 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,9 +27,26 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   TextEditingController pdesc = TextEditingController();
   List<XFile>? files;
   ImagePicker imagePicker = ImagePicker();
+  List<String>? subCategories = [];
+  String selectSubCategory = "Select subcategory";
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
+    DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
+    databaseReference.child(selectCategory).onValue.listen((event) {
+      Map<dynamic, dynamic>? values =
+          event.snapshot.value as Map<dynamic, dynamic>?;
+      if (values == null && values!.length == 1) {
+        return;
+      }
+      subCategories!.clear();
+      values.forEach((key, value) {
+        subCategories!.add(value[Constants.dSubCategoryName]);
+      });
+      setState(() {});
+    });
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -74,7 +91,15 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                                           await imagePicker.pickMultiImage();
                                       if (!mounted) return;
                                       setState(() {
-                                        files = selectedImages;
+                                        if (selectedImages.length > 3) {
+                                          ScaffoldMessenger.of(context)
+                                            ..hideCurrentSnackBar()
+                                            ..showSnackBar(const SnackBar(
+                                                content: Text(
+                                                    "Please select only three images")));
+                                        } else {
+                                          files = selectedImages;
+                                        }
                                       });
                                     },
                                     child: const Icon(
@@ -157,6 +182,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                       return DropdownMenuItem(value: e, child: Text(e));
                     }).toList(),
                     onChanged: (value) {
+                      if (!mounted) return;
                       setState(() {
                         selectCategory = value!;
                       });
@@ -166,35 +192,144 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                 const SizedBox(
                   height: 8,
                 ),
-                Card(
-                  color: Colors.white,
-                  elevation: 2,
-                  child: DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                        border:
-                            OutlineInputBorder(borderSide: BorderSide.none)),
-                    value: selectCategory,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: <String>['Male', 'Female', 'Kids']
-                        .map<DropdownMenuItem<String>>((e) {
-                      return DropdownMenuItem(value: e, child: Text(e));
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectCategory = value!;
-                      });
-                    },
-                  ),
-                ),
+                subCategories == null
+                    ? const Text("No Data")
+                    : Card(
+                        color: Colors.white,
+                        elevation: 2,
+                        child: DropdownButtonFormField(
+                          hint: const Text('Select subcategory'),
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none)),
+                          value: null,
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          items: subCategories!
+                              .asMap()
+                              .entries
+                              .map<DropdownMenuItem<String>>((e) {
+                            return DropdownMenuItem(
+                                value: e.value, child: Text(e.value));
+                          }).toList(),
+                          onChanged: (value) {
+                            if (!mounted) return;
+                            setState(() {
+                              selectSubCategory = value!;
+                            });
+                          },
+                        ),
+                      ),
                 const SizedBox(
                   height: 8,
                 ),
-                Button_Style.button_Theme(Constants.addProduct)
+                loading == true
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.red,
+                        ),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          if (!mounted) return;
+                          setState(() {
+                            if (files == null &&
+                                pname.text.isEmpty &
+                                    pprice.text.isEmpty &
+                                    pdprice.text.isEmpty &
+                                    pbname.text.isEmpty &
+                                    pdesc.text.isEmpty &
+                                    selectSubCategory
+                                        .contains("Select subcategory")) {
+                              ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(const SnackBar(
+                                    content:
+                                        Text("Please fill all the field")));
+                            } else {
+                              addProductDataToDatabase(
+                                  files,
+                                  pname.text,
+                                  pprice.text,
+                                  pdprice.text,
+                                  pbname.text,
+                                  pdesc.text,
+                                  selectCategory,
+                                  selectSubCategory);
+                            }
+                          });
+                        },
+                        child: Button_Style.button_Theme(Constants.addProduct))
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> addProductDataToDatabase(
+      List<XFile>? files,
+      String name,
+      String price,
+      String dprice,
+      String bname,
+      String desc,
+      String category,
+      String subCategory) async {
+    loading = true;
+    List imageUrls = [];
+    for (var i = 0; i < files!.length; i++) {
+      Reference reference = FirebaseStorage.instance.ref(
+          "/Products/$category/$subCategory/$name${Random().nextInt(100)}");
+
+      UploadTask uploadTask = reference.putFile(File(files[i].path));
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+      var imagepath = taskSnapshot.ref.getDownloadURL().catchError((onError) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(onError.toString())));
+        setState(() {
+          loading = false;
+        });
+      });
+      imageUrls.add(imagepath);
+      setState(() {});
+    }
+    DatabaseReference databaseReference = FirebaseDatabase.instance
+        .ref(category)
+        .child(subCategory)
+        .child(Constants.dProducts)
+        .push();
+    databaseReference.update({
+      Constants.dPname: name,
+      Constants.dPrice: price,
+      Constants.ddPrice: dprice,
+      Constants.dBrand: bname,
+      Constants.dDesc: desc,
+      Constants.dcategory: category,
+      Constants.dsubCategory: subCategory
+    }).catchError((onError) {
+      setState(() {
+        loading = false;
+      });
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(onError.toString())));
+    });
+    for (var i = 0; i < imageUrls.length; i++) {
+      databaseReference
+          .child(Constants.dimages)
+          .update({i.toString(): await imageUrls[i]}).then((value) {
+        setState(() {
+          loading = false;
+        });
+      }).catchError((onError) {
+        loading = false;
+
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(onError.toString())));
+      });
+    }
   }
 }

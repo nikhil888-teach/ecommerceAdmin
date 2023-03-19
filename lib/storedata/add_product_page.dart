@@ -166,6 +166,26 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                 const SizedBox(
                   height: 8,
                 ),
+                Card(
+                  color: Colors.white,
+                  elevation: 2,
+                  child: DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
+                    value: selectCategory,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items: <String>['Male', 'Female', 'Kids']
+                        .map<DropdownMenuItem<String>>((e) {
+                      return DropdownMenuItem(value: e, child: Text(e));
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectCategory = value!;
+                      });
+                    },
+                  ),
+                ),
                 const SizedBox(
                   height: 8,
                 ),

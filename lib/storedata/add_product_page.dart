@@ -30,6 +30,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   List<String>? subCategories = [];
   String selectSubCategory = "Select subcategory";
   bool loading = false;
+  // bool k=true;
 
   @override
   Widget build(BuildContext context) {

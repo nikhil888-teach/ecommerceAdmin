@@ -133,7 +133,15 @@ class _MyCategoryPageState extends State<MyCategoryPage> {
                                           "Would you like to delete this category?"),
                                       actions: [
                                         TextButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            String name = snapshot
+                                                .child(
+                                                    Constants.dSubCategoryName)
+                                                .value
+                                                .toString();
+                                            snapshot.child(name).ref.remove();
+                                          
+                                          },
                                           child: Text(
                                             "Yes",
                                             style: Text_Style.text_Theme(

@@ -45,8 +45,8 @@ class Constants {
 
   //category page
   static const category = "Categories";
-  static const men = "Men";
-  static const women = "Women";
+  static const men = "Male";
+  static const women = "Female";
   static const kide = "Kids";
 
   //add category page

@@ -1,0 +1,79 @@
+{
+    "Products": {
+        "-NRDUeoO56TAVXLjuBS9": {
+            "Brand": "Nike",
+            "Gender": "Kids",
+            "Description": "guouoiyidtdurd yoyohooy ohvo",
+            "DisPrice": "102",
+            "Pname": "fufufihihi",
+            "Price": "98",
+            "Type": "Shoes",
+            "Date": "25-03-2023",
+            "images": [
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi28?alt=media&token=61ac95b8-4262-4ae2-ab3b-09c5d9a1201b",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi16?alt=media&token=a05f8b5d-ca80-486d-80f1-5f7998698c60",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi90?alt=media&token=2a829dd9-8f25-4ac2-90cf-f1dc005fa8d0"
+            ]
+        },
+        "-NRDUeoO56TAVXLjuBS2": {
+            "Brand": "Adidas",
+            "Gender": "Men",
+            "Description": "Adidas yoyohooy ohvo",
+            "DisPrice": "102",
+            "Pname": "fufufihihi",
+            "Price": "980",
+            "Type": "T-shirt",
+            "Date": "21-03-2023",
+            "images": [
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi28?alt=media&token=61ac95b8-4262-4ae2-ab3b-09c5d9a1201b",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi16?alt=media&token=a05f8b5d-ca80-486d-80f1-5f7998698c60",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi90?alt=media&token=2a829dd9-8f25-4ac2-90cf-f1dc005fa8d0"
+            ]
+        },
+        "-NRDUeoO56TAVXLjuBS3": {
+            "Brand": "Zara",
+            "Gender": "Women",
+            "Description": "zara yoyohooy ohvo",
+            "DisPrice": "102",
+            "Pname": "Women's Pents",
+            "Price": "98",
+            "Type": "Pent",
+            "Date": "20-03-2023",
+            "images": [
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi28?alt=media&token=61ac95b8-4262-4ae2-ab3b-09c5d9a1201b",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi16?alt=media&token=a05f8b5d-ca80-486d-80f1-5f7998698c60",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi90?alt=media&token=2a829dd9-8f25-4ac2-90cf-f1dc005fa8d0"
+            ]
+        },
+        "-NRDUeoO56TAVXLjuBS4": {
+            "Brand": "Nike",
+            "Gender": "Men",
+            "Description": "Men's Shoes yoyohooy ohvo",
+            "DisPrice": "200",
+            "Pname": "Nike shoes",
+            "Price": "1000",
+            "Type": "Shoes",
+            "Date": "18-03-2023",
+            "images": [
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi28?alt=media&token=61ac95b8-4262-4ae2-ab3b-09c5d9a1201b",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi16?alt=media&token=a05f8b5d-ca80-486d-80f1-5f7998698c60",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi90?alt=media&token=2a829dd9-8f25-4ac2-90cf-f1dc005fa8d0"
+            ]
+        },
+        "-NRDUeoO56TAVXLjuBS5": {
+            "Brand": "Adidas",
+            "Gender": "Men",
+            "Description": "Men's pent yoyohooy ohvo",
+            "DisPrice": "12",
+            "Pname": "men's Pents",
+            "Price": "980",
+            "Type": "Pent",
+            "Date": "22-03-2023",
+            "images": [
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi28?alt=media&token=61ac95b8-4262-4ae2-ab3b-09c5d9a1201b",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi16?alt=media&token=a05f8b5d-ca80-486d-80f1-5f7998698c60",
+                "https://firebasestorage.googleapis.com/v0/b/topecommerce-fab5d.appspot.com/o/Products%2FKids%2Fnes2d%2Ffufufihihi90?alt=media&token=2a829dd9-8f25-4ac2-90cf-f1dc005fa8d0"
+            ]
+        }
+    }
+}

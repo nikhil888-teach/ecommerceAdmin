@@ -1,6 +1,8 @@
 import 'package:adminpanelecommerce/storedata/add_product_page.dart';
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
 class MyProductPage extends StatefulWidget {
@@ -23,11 +25,15 @@ class _MyProductPageState extends State<MyProductPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: ListView.builder(
+          child: FirebaseAnimatedList(
+            query: FirebaseDatabase.instance.ref('TestUjas/Products'),
             physics: const BouncingScrollPhysics(),
-            itemCount: 20,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
+            defaultChild: const Center(
+              child: CircularProgressIndicator(
+                color: Colors.red,
+              ),
+            ),
+            itemBuilder: (context, snapshot, animation, index) {
               return Card(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +43,12 @@ class _MyProductPageState extends State<MyProductPage> {
                           topLeft: Radius.circular(4),
                           bottomLeft: Radius.circular(4)),
                       child: Image.network(
-                        "https://images.pexels.com/photos/852860/pexels-photo-852860.jpeg?auto=compress&cs=tinysrgb&w=600",
+                        snapshot
+                            .child('images')
+                            .children
+                            .elementAt(1)
+                            .value
+                            .toString(),
                         fit: BoxFit.fill,
                         height: 120,
                         width: 120,
@@ -59,7 +70,7 @@ class _MyProductPageState extends State<MyProductPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("LIME",
+                                  Text(snapshot.child('Brand').value.toString(),
                                       style: Text_Style.text_Theme(
                                           Constants.grey_text,
                                           14,
@@ -83,23 +94,24 @@ class _MyProductPageState extends State<MyProductPage> {
                                 ],
                               ),
                               Text(
-                                "Longsleeve Violeta",
+                                snapshot.child('Description').value.toString(),
                                 style: Text_Style.text_Theme(
                                     Constants.black_text, 16, FontWeight.bold),
                               ),
                               Row(
                                 children: [
                                   Text(
-                                    "12\$",
+                                    "${snapshot.child('Price').value}\$",
                                     style: Text_Style.text_Theme(
                                         Constants.red_text,
                                         14,
                                         FontWeight.bold),
                                   ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 5),
-                                    child: Text("15\$",
-                                        style: TextStyle(
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Text(
+                                        "${snapshot.child('DisPrice').value}\$",
+                                        style: const TextStyle(
                                             color: Color(Constants.grey_text),
                                             fontSize: 14,
                                             decoration:

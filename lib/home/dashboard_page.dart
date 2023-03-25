@@ -1,5 +1,6 @@
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,10 @@ class _MyDashboardPageState extends State<MyDashboardPage>
   AnimationController? animationController;
   Animation<double>? animation;
   // var _opacity = 0.0;
+  DatabaseReference ref = FirebaseDatabase.instance.ref();
+  int liveProduct = 0;
+  int totalUser = 0;
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -26,6 +31,20 @@ class _MyDashboardPageState extends State<MyDashboardPage>
     animationController!.forward();
 
     super.initState();
+    countLive();
+  }
+
+  countLive() {
+    ref.child('TestUjas/Products').onValue.listen((DatabaseEvent event) {
+      setState(() {
+        liveProduct = event.snapshot.children.length;
+      });
+    });
+    ref.child('User').onValue.listen((DatabaseEvent event) {
+      setState(() {
+        totalUser = event.snapshot.children.length;
+      });
+    });
   }
 
   @override
@@ -93,9 +112,9 @@ class _MyDashboardPageState extends State<MyDashboardPage>
                                 duration: const Duration(milliseconds: 600),
                                 opacity: animationController!.value,
                                 curve: Curves.easeIn,
-                                child: const Text(
-                                  "72,540",
-                                  style: TextStyle(
+                                child: Text(
+                                  "$totalUser",
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 30),
@@ -214,8 +233,8 @@ class _MyDashboardPageState extends State<MyDashboardPage>
                                   duration: const Duration(milliseconds: 600),
                                   opacity: animationController!.value,
                                   curve: Curves.easeIn,
-                                  child: const Text("72,540",
-                                      style: TextStyle(
+                                  child: Text("$liveProduct",
+                                      style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 30)),

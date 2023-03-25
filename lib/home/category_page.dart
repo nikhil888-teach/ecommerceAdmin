@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:adminpanelecommerce/home/products/allproduct_page.dart';
 import 'package:adminpanelecommerce/storedata/add_category_page.dart';
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
@@ -45,11 +44,11 @@ class _MyCategoryPageState extends State<MyCategoryPage> {
                     Text(Constants.women),
                     Text(Constants.kide)
                   ]),
-              Expanded(
+              const Expanded(
                 child: TabBarView(children: [
-                  listOfCategories(Constants.dMale),
-                  listOfCategories(Constants.dFemale),
-                  listOfCategories(Constants.dKids),
+                  ProductPageView(selectCategory: Constants.men),
+                  ProductPageView(selectCategory: Constants.women),
+                  ProductPageView(selectCategory: Constants.dKids),
                 ]),
               )
             ],
@@ -70,109 +69,142 @@ class _MyCategoryPageState extends State<MyCategoryPage> {
       ),
     );
   }
+}
 
-  Padding listOfCategories(String selectCategory) {
+class ProductPageView extends StatefulWidget {
+  const ProductPageView({super.key, required this.selectCategory});
+  final String selectCategory;
+
+  @override
+  State<ProductPageView> createState() => _ProductPageViewState();
+}
+
+class _ProductPageViewState extends State<ProductPageView> {
+  @override
+  Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.only(top: 16),
         child: FirebaseAnimatedList(
-          query: FirebaseDatabase.instance.ref(selectCategory),
-          physics: const BouncingScrollPhysics(),
-          defaultChild: const Center(
-            child: CircularProgressIndicator(
-              color: Colors.red,
-            ),
-          ),
-          itemBuilder: (context, snapshot, animation, index) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: SizedBox(
-                  height: 105,
-                  child: Card(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Image.network(
-                        snapshot
-                            .child(Constants.dSubCategoryImage)
-                            .value
-                            .toString(),
-                        width: 105,
-                        height: 105,
-                        fit: BoxFit.fill,
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 25),
-                              child: Text(
-                                snapshot
-                                    .child(Constants.dSubCategoryName)
-                                    .value
-                                    .toString(),
-                                style: Text_Style.text_Theme(
-                                    Constants.black_text, 18, FontWeight.bold),
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text(
-                                        "Delete Category",
-                                        style: Text_Style.text_Theme(
-                                            Constants.red_text,
-                                            20,
-                                            FontWeight.bold),
-                                      ),
-                                      content: const Text(
-                                          "Would you like to delete this category?"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            String name = snapshot
-                                                .child(
-                                                    Constants.dSubCategoryName)
-                                                .value
-                                                .toString();
-                                            snapshot.child(name).ref.remove();
-                                          
-                                          },
-                                          child: Text(
-                                            "Yes",
-                                            style: Text_Style.text_Theme(
-                                                Constants.red_text,
-                                                16,
-                                                FontWeight.bold),
-                                          ),
-                                        ),
-                                        TextButton(
-                                            onPressed: () {},
-                                            child: Text(
-                                              "No",
-                                              style: Text_Style.text_Theme(
-                                                  Constants.red_text,
-                                                  16,
-                                                  FontWeight.bold),
-                                            ))
-                                      ],
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.delete))
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
-                ),
+            query: FirebaseDatabase.instance.ref('TestUjas/Products'),
+            physics: const BouncingScrollPhysics(),
+            defaultChild: const Center(
+              child: CircularProgressIndicator(
+                color: Colors.red,
               ),
-            );
-          },
-        ));
+            ),
+            itemBuilder: (context, snapshot, animation, index) {
+              // print(widget.selectCategory);
+              if (snapshot.child('Gender').value == widget.selectCategory) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: SizedBox(
+                      height: 105,
+                      child: Card(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Image.network(
+                            snapshot
+                                .child('images')
+                                .children
+                                .elementAt(1)
+                                .value
+                                .toString(),
+                            width: 105,
+                            height: 105,
+                            fit: BoxFit.fill,
+                          ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 25),
+                                  child: Text(
+                                    snapshot.child('Type').value.toString(),
+                                    style: Text_Style.text_Theme(
+                                        Constants.black_text,
+                                        18,
+                                        FontWeight.bold),
+                                  ),
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      // showDialog(
+                                      //   context: context,
+                                      //   builder: (context) => AlertDialog(
+                                      //     title: Text(
+                                      //       "Delete Category",
+                                      //       style: Text_Style.text_Theme(
+                                      //           Constants.red_text,
+                                      //           20,
+                                      //           FontWeight.bold),
+                                      //     ),
+                                      //     content: const Text(
+                                      //         "Would you like to delete this category?"),
+                                      //     actions: [
+                                      //       TextButton(
+                                      //         onPressed: () {
+                                      //           String name = snapshot
+                                      //               .child(
+                                      //                   Constants.dSubCategoryName)
+                                      //               .value
+                                      //               .toString();
+                                      //           snapshot.child(name).ref.remove();
+                                      //         },
+                                      //         child: Text(
+                                      //           "Yes",
+                                      //           style: Text_Style.text_Theme(
+                                      //               Constants.red_text,
+                                      //               16,
+                                      //               FontWeight.bold),
+                                      //         ),
+                                      //       ),
+                                      //       TextButton(
+                                      //           onPressed: () {
+                                      //             Navigator.pop(context);
+                                      //           },
+                                      //           child: Text(
+                                      //             "No",
+                                      //             style: Text_Style.text_Theme(
+                                      //                 Constants.red_text,
+                                      //                 16,
+                                      //                 FontWeight.bold),
+                                      //           ))
+                                      //     ],
+                                      //   ),
+                                      // );
+
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            MyCategoryProducts(
+                                          type: snapshot
+                                              .child('Type')
+                                              .value
+                                              .toString(),
+                                          gender: snapshot
+                                              .child('Gender')
+                                              .value
+                                              .toString(),
+                                        ),
+                                      ));
+                                    },
+                                    icon: const Icon(Icons.delete))
+                              ],
+                            ),
+                          ),
+                        ],
+                      )),
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox();
+              }
+            }));
   }
 }

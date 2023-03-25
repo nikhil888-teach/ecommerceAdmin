@@ -99,13 +99,14 @@ class _MyAddCategoryState extends State<MyAddCategory> {
               const SizedBox(
                 height: 8,
               ),
-              Textformfield_style.textField(subCategory, Constants.subCategory),
+              Textformfield_style.textField(
+                  subCategory, Constants.subCategory, TextInputType.name),
               const SizedBox(
                 height: 8,
               ),
               InkWell(
                   onTap: () {
-                    if (subCategory.text.isNotEmpty) {
+                    if (subCategory.text.isNotEmpty && file != null) {
                       setState(() {
                         loading = true;
                       });
@@ -133,7 +134,7 @@ class _MyAddCategoryState extends State<MyAddCategory> {
                       ScaffoldMessenger.of(context)
                         ..hideCurrentSnackBar()
                         ..showSnackBar(const SnackBar(
-                            content: Text("Please fill sub Category Field")));
+                            content: Text("Please fill All Field")));
                     }
                   },
                   child: loading == true

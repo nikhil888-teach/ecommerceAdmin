@@ -21,6 +21,7 @@ class _MyAddCategoryState extends State<MyAddCategory> {
   TextEditingController subCategory = TextEditingController();
   XFile? file;
   ImagePicker imagePicker = ImagePicker();
+
   bool loading = false;
 
   @override
@@ -90,6 +91,8 @@ class _MyAddCategoryState extends State<MyAddCategory> {
                     return DropdownMenuItem(value: e, child: Text(e));
                   }).toList(),
                   onChanged: (value) {
+                    if (!mounted) return;
+
                     setState(() {
                       selectCategory = value!;
                     });
@@ -107,6 +110,8 @@ class _MyAddCategoryState extends State<MyAddCategory> {
               InkWell(
                   onTap: () {
                     if (subCategory.text.isNotEmpty && file != null) {
+                      if (!mounted) return;
+
                       setState(() {
                         loading = true;
                       });
@@ -119,6 +124,8 @@ class _MyAddCategoryState extends State<MyAddCategory> {
                         addCategoryToDatabase(selectCategory, subCategory.text,
                             imagePath.toString());
                       }).catchError((onError) {
+                        if (!mounted) return;
+
                         setState(() {
                           loading = false;
                         });
@@ -128,6 +135,8 @@ class _MyAddCategoryState extends State<MyAddCategory> {
                               SnackBar(content: Text(onError.toString())));
                       });
                     } else {
+                      if (!mounted) return;
+
                       setState(() {
                         loading = false;
                       });
@@ -158,6 +167,8 @@ class _MyAddCategoryState extends State<MyAddCategory> {
       Constants.dSubCategoryImage: imagePath,
       Constants.dSubCategoryName: subcategory,
     }).then((value) {
+      if (!mounted) return;
+
       setState(() {
         loading = false;
       });
@@ -169,6 +180,8 @@ class _MyAddCategoryState extends State<MyAddCategory> {
         ..showSnackBar(
             const SnackBar(content: Text("Category Added Successfull")));
     }).catchError((onError) {
+      if (!mounted) return;
+
       setState(() {
         loading = false;
       });

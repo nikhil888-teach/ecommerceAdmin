@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/constants.dart';
-import '../../widgets/button_theme.dart';
-import '../../widgets/text_theme.dart';
+import '../utils/constants.dart';
+import '../widgets/button_theme.dart';
+import '../widgets/text_theme.dart';
 
 class MyProductPage extends StatefulWidget {
   const MyProductPage(

@@ -25,7 +25,7 @@ class _MyUserPageState extends State<MyUserPage> {
         body: Padding(
           padding: const EdgeInsets.all(10.0),
           child: FirebaseAnimatedList(
-            query: FirebaseDatabase.instance.ref('User'),
+            query: FirebaseDatabase.instance.ref(Constants.dUser),
             physics: const BouncingScrollPhysics(),
             defaultChild: const Center(
               child: CircularProgressIndicator(
@@ -39,12 +39,12 @@ class _MyUserPageState extends State<MyUserPage> {
                         MediaQuery.of(context).size.height / 100)),
                 child: ListTile(
                   leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        MediaQuery.of(context).size.height / 7),
+                    borderRadius: BorderRadius.circular(100),
                     child: Image.network(
-                      "https://avatars.githubusercontent.com/u/84656107?v=4",
+                      snapshot.child('image').value.toString(),
                       fit: BoxFit.fill,
-                      height: 90,
+                      height: 100,
+                      width: 100,
                     ),
                   ),
                   title: Text(

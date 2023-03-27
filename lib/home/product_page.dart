@@ -26,7 +26,7 @@ class _MyProductPageState extends State<MyProductPage> {
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: FirebaseAnimatedList(
-            query: FirebaseDatabase.instance.ref('TestUjas/Products'),
+            query: FirebaseDatabase.instance.ref(Constants.dProducts),
             physics: const BouncingScrollPhysics(),
             defaultChild: const Center(
               child: CircularProgressIndicator(
@@ -44,7 +44,7 @@ class _MyProductPageState extends State<MyProductPage> {
                           bottomLeft: Radius.circular(4)),
                       child: Image.network(
                         snapshot
-                            .child('images')
+                            .child(Constants.dimages)
                             .children
                             .elementAt(1)
                             .value
@@ -70,7 +70,11 @@ class _MyProductPageState extends State<MyProductPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(snapshot.child('Brand').value.toString(),
+                                  Text(
+                                      snapshot
+                                          .child(Constants.dBrand)
+                                          .value
+                                          .toString(),
                                       style: Text_Style.text_Theme(
                                           Constants.grey_text,
                                           14,
@@ -94,14 +98,17 @@ class _MyProductPageState extends State<MyProductPage> {
                                 ],
                               ),
                               Text(
-                                snapshot.child('Description').value.toString(),
+                                snapshot
+                                    .child(Constants.dDesc)
+                                    .value
+                                    .toString(),
                                 style: Text_Style.text_Theme(
                                     Constants.black_text, 16, FontWeight.bold),
                               ),
                               Row(
                                 children: [
                                   Text(
-                                    "${snapshot.child('Price').value}\$",
+                                    "${snapshot.child(Constants.dSPrice).value}\$",
                                     style: Text_Style.text_Theme(
                                         Constants.red_text,
                                         14,
@@ -110,7 +117,7 @@ class _MyProductPageState extends State<MyProductPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5),
                                     child: Text(
-                                        "${snapshot.child('DisPrice').value}\$",
+                                        "${snapshot.child(Constants.dSPrice).value}\$",
                                         style: const TextStyle(
                                             color: Color(Constants.grey_text),
                                             fontSize: 14,

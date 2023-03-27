@@ -1,10 +1,9 @@
-import 'package:adminpanelecommerce/home/products/product_view.dart';
+import 'package:adminpanelecommerce/products/product_view.dart';
+import 'package:adminpanelecommerce/utils/constants.dart';
+import 'package:adminpanelecommerce/widgets/text_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-import '../../utils/constants.dart';
-import '../../widgets/text_theme.dart';
 
 class MyCategoryProducts extends StatefulWidget {
   const MyCategoryProducts(
@@ -26,7 +25,7 @@ class _MyCategoryProductsState extends State<MyCategoryProducts> {
                   Constants.black_text, 20, FontWeight.bold)),
         ),
         body: StreamBuilder(
-          stream: FirebaseDatabase.instance.ref('TestUjas/Products').onValue,
+          stream: FirebaseDatabase.instance.ref(Constants.dProducts).onValue,
           builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
             if (!snapshot.hasData) {
               return const Center(
@@ -41,8 +40,8 @@ class _MyCategoryProductsState extends State<MyCategoryProducts> {
             List<dynamic> list = [];
             list.clear();
             for (var element in data.values) {
-              if (element['Type'] == widget.type &&
-                  element['Gender'] == widget.gender) {
+              if (element[Constants.dType] == widget.type &&
+                  element[Constants.dGender] == widget.gender) {
                 list.add(element);
               }
             }
@@ -65,9 +64,6 @@ class _MyCategoryProductsState extends State<MyCategoryProducts> {
                     scrollDirection: Axis.vertical,
                     physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
-                      // print(widget.type);
-                      // list[index]['type'];
-
                       return InkWell(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
@@ -76,7 +72,7 @@ class _MyCategoryProductsState extends State<MyCategoryProducts> {
                               brand: list[index][Constants.dBrand],
                               decription: list[index][Constants.dDesc],
                               name: list[index][Constants.dPname],
-                              price: list[index][Constants.dPrice],
+                              price: list[index][Constants.dSPrice],
                             ),
                           ));
                         },
@@ -184,7 +180,7 @@ class _MyCategoryProductsState extends State<MyCategoryProducts> {
                                           padding:
                                               const EdgeInsets.only(right: 4),
                                           child: Text(
-                                              "${list[index][Constants.ddPrice]}\$",
+                                              "${list[index][Constants.dSPrice]}\$",
                                               style: const TextStyle(
                                                   decoration: TextDecoration
                                                       .lineThrough,
@@ -194,7 +190,7 @@ class _MyCategoryProductsState extends State<MyCategoryProducts> {
                                                   fontWeight: FontWeight.bold)),
                                         ),
                                         Text(
-                                            "${list[index][Constants.dPrice]}\$",
+                                            "${list[index][Constants.dSPrice]}\$",
                                             style: Text_Style.text_Theme(
                                               Constants.red_text,
                                               14,

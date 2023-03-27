@@ -26,6 +26,8 @@ class _MyDashboardPageState extends State<MyDashboardPage>
         vsync: this, duration: const Duration(milliseconds: 100));
     animation = Tween(begin: 0.0, end: 1.0).animate(animationController!);
     animationController!.addListener(() {
+      if (!mounted) return;
+
       setState(() {});
     });
     animationController!.forward();
@@ -35,12 +37,16 @@ class _MyDashboardPageState extends State<MyDashboardPage>
   }
 
   countLive() {
-    ref.child('TestUjas/Products').onValue.listen((DatabaseEvent event) {
+    ref.child(Constants.products).onValue.listen((DatabaseEvent event) {
+      if (!mounted) return;
+
       setState(() {
         liveProduct = event.snapshot.children.length;
       });
     });
-    ref.child('User').onValue.listen((DatabaseEvent event) {
+    ref.child(Constants.dUser).onValue.listen((DatabaseEvent event) {
+      if (!mounted) return;
+
       setState(() {
         totalUser = event.snapshot.children.length;
       });

@@ -32,6 +32,8 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   String selectSubCategory = "Select subcategory";
   bool loading = false;
   final _formKey = GlobalKey<FormState>();
+  String selectedColor = "Yes";
+  String selectedSize = "Yes";
 
   void validateAndSave() {
     final form = _formKey.currentState;
@@ -55,6 +57,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
       values.forEach((key, value) {
         subCategories!.add(value[Constants.dSubCategoryName]);
       });
+      if (!mounted) return;
       setState(() {});
     });
 
@@ -247,6 +250,109 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                   const SizedBox(
                     height: 8,
                   ),
+                  Text(
+                    Constants.display,
+                    style: Text_Style.text_Theme(
+                        Constants.black_text, 16, FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Color :",
+                            style: Text_Style.text_Theme(
+                                Constants.black_text, 14, FontWeight.w500),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            activeColor: Colors.red,
+                            value: "Yes",
+                            groupValue: selectedColor,
+                            onChanged: (value) {
+                              if (!mounted) return;
+                              setState(() {
+                                selectedColor = value!;
+                              });
+                            },
+                          ),
+                          const Text("Yes"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            activeColor: Colors.red,
+                            value: "No",
+                            groupValue: selectedColor,
+                            onChanged: (value) {
+                              if (!mounted) return;
+                              setState(() {
+                                selectedColor = value!;
+                              });
+                            },
+                          ),
+                          const Text("No"),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Size :",
+                            style: Text_Style.text_Theme(
+                                Constants.black_text, 14, FontWeight.w500),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            activeColor: Colors.red,
+                            value: "Yes",
+                            groupValue: selectedSize,
+                            onChanged: (value) {
+                              if (!mounted) return;
+                              setState(() {
+                                selectedSize = value!;
+                              });
+                            },
+                          ),
+                          const Text("Yes"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            activeColor: Colors.red,
+                            value: "No",
+                            groupValue: selectedSize,
+                            onChanged: (value) {
+                              if (!mounted) return;
+                              setState(() {
+                                selectedSize = value!;
+                              });
+                            },
+                          ),
+                          const Text("No"),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   loading == true
                       ? const Center(
                           child: CircularProgressIndicator(
@@ -316,28 +422,37 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(onError.toString())));
-        setState(() {
-          loading = false;
-        });
+        if (!mounted) {
+          setState(() {
+            loading = false;
+          });
+        }
       });
+
       imageUrls.add(imagepath);
+      if (!mounted) return;
       setState(() {});
     }
     DatabaseReference databaseReference =
-        FirebaseDatabase.instance.ref('TestUjas/Products').push();
+        FirebaseDatabase.instance.ref(Constants.dProducts).push();
     var now = DateTime.now();
     var formatter = DateFormat('dd-MM-yyyy');
     String formattedDate = formatter.format(now);
     databaseReference.update({
-      'Pname': name,
-      'Price': price,
-      'DisPrice': dprice,
-      'Brand': bname,
-      'Description': desc,
-      'Gender': category,
-      'Type': subCategory,
-      'Date': formattedDate
+      Constants.dId: databaseReference.key,
+      Constants.dPname: name,
+      Constants.dSPrice: price,
+      Constants.ddPrice: dprice,
+      Constants.dBrand: bname,
+      Constants.dDesc: desc,
+      Constants.dGender: category,
+      Constants.dType: subCategory,
+      Constants.dDate: formattedDate,
+      Constants.dSize: selectedSize == "Yes" ? true : false,
+      Constants.dColor: selectedColor == "Yes" ? true : false,
     }).catchError((onError) {
+      if (!mounted) return;
+
       setState(() {
         loading = false;
       });
@@ -349,6 +464,8 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
       databaseReference
           .child(Constants.dimages)
           .update({i.toString(): await imageUrls[i]}).then((value) {
+        if (!mounted) return;
+
         setState(() {
           loading = false;
         });

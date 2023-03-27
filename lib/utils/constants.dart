@@ -62,6 +62,7 @@ class Constants {
   static const brandName = "Brand Name";
   static const productDesc = "Product Description";
   static const selectImageText = "Select Multiple photos of your product";
+  static const display = "Option display or Not";
 
   //user page
   static const user = "Users";
@@ -73,14 +74,24 @@ class Constants {
   static const dMale = "Male";
   static const dFemale = "Female";
   static const dKids = "Kids";
+
+  // products
+
   static const dimages = "images";
   static const dPname = "Pname";
-  static const dPrice = "Price";
+  static const dSPrice = "Price";
   static const ddPrice = "DisPrice";
   static const dBrand = "Brand";
   static const dDesc = "Description";
   static const dcategory = "Category";
   static const dsubCategory = "SubCategory";
+  static const dType = "Type";
+  static const dGender = "Gender";
+  static const dDate = "Date";
+  static const dId = "ID";
+  static const dUser = "User";
+  static const dColor = "Color";
+  static const dSize = "Size";
 
   //COLOR
   // ignore: constant_identifier_names

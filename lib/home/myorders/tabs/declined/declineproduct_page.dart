@@ -1,10 +1,29 @@
 import 'package:adminpanelecommerce/utils/constants.dart';
+import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
 class MyDeclinedProduct extends StatefulWidget {
-  const MyDeclinedProduct({super.key});
-
+  const MyDeclinedProduct(
+      {super.key,
+      required this.orderKey,
+      required this.trackNo,
+      required this.totalProducts,
+      required this.date,
+      required this.address,
+      required this.payment,
+      required this.orderNo,
+      this.total});
+  final String orderKey;
+  final String trackNo;
+  final String totalProducts;
+  final String date;
+  final String address;
+  final String payment;
+  final String orderNo;
+  final total;
   @override
   State<MyDeclinedProduct> createState() => _MyDeclinedProductState();
 }
@@ -16,7 +35,12 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
         child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leadingWidth: 0,
+        elevation: 1,
+        centerTitle: true,
+        leading: const Icon(
+          Icons.arrow_back_ios,
+          color: Colors.black,
+        ),
         title: Text("Order Details",
             style: Text_Style.text_Theme(
                 Constants.black_text, 18, FontWeight.bold)),
@@ -36,12 +60,12 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                       Text(Constants.orderNo,
                           style: Text_Style.text_Theme(
                               Constants.black_text, 16, FontWeight.bold)),
-                      Text("102003",
+                      Text(widget.orderNo,
                           style: Text_Style.text_Theme(
                               Constants.black_text, 16, FontWeight.bold))
                     ],
                   ),
-                  Text("05-12-2019",
+                  Text(widget.date,
                       style: Text_Style.text_Theme(
                           Constants.grey_text, 16, FontWeight.normal))
                 ],
@@ -53,7 +77,7 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                     Text(Constants.trackingNo,
                         style: Text_Style.text_Theme(
                             Constants.grey_text, 16, FontWeight.normal)),
-                    Text("IW3475453455",
+                    Text(widget.trackNo,
                         style: Text_Style.text_Theme(
                             Constants.black_text, 16, FontWeight.w500))
                   ],
@@ -64,7 +88,7 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                 children: [
                   Row(
                     children: [
-                      Text("3",
+                      Text(widget.totalProducts,
                           style: Text_Style.text_Theme(
                               Constants.black_text, 16, FontWeight.normal)),
                       Text(Constants.item,
@@ -74,141 +98,187 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                   ),
                   const Text(Constants.declined,
                       style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500))
+                        color: Colors.green,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ))
                 ],
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),
-                child: ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 10,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: Card(
-                      child: Row(
-                        children: [
-                          Ink(
-                              decoration: const BoxDecoration(boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black12,
-                                    offset: Offset(0, 0),
-                                    blurRadius: 5),
-                              ]),
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(4),
-                                    bottomLeft: Radius.circular(4)),
-                                child: Image.network(
-                                  "https://m.media-amazon.com/images/I/61XdzIyV6hL._UY741_.jpg",
-                                  fit: BoxFit.fill,
-                                  color: Colors.grey.shade300,
-                                  colorBlendMode: BlendMode.multiply,
-                                  height: 105,
-                                  width: 105,
-                                ),
-                              )),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 15),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 5),
-                                    child: Text(
-                                      "Pullover",
-                                      style: Text_Style.text_Theme(
+                child: Container(
+                  child: FirebaseAnimatedList(
+                    query: FirebaseDatabase.instance
+                        .ref(Constants.dorder)
+                        .child(widget.orderKey)
+                        .child(Constants.dProducts),
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, snapshot, animation, index) =>
+                        Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Card(
+                        child: Row(
+                          children: [
+                            Ink(
+                                decoration: const BoxDecoration(boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black12,
+                                      offset: Offset(0, 0),
+                                      blurRadius: 5),
+                                ]),
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(4),
+                                      bottomLeft: Radius.circular(4)),
+                                  child: Image.network(
+                                    snapshot
+                                        .child(Constants.dimages)
+                                        .value
+                                        .toString(),
+                                    fit: BoxFit.fill,
+                                    color: Colors.grey.shade300,
+                                    colorBlendMode: BlendMode.multiply,
+                                    height: 105,
+                                    width: 105,
+                                  ),
+                                )),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Text(
+                                        snapshot
+                                            .child(Constants.dPname)
+                                            .value
+                                            .toString(),
+                                        style: Text_Style.text_Theme(
                                           Constants.black_text,
                                           16,
-                                          FontWeight.bold),
+                                          FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        bottom: 7, top: 7),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          Constants.color,
-                                          style: Text_Style.text_Theme(
-                                              Constants.grey_text,
-                                              13,
-                                              FontWeight.normal),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 15),
-                                          child: Text(
-                                            "Black",
-                                            style: Text_Style.text_Theme(
-                                                Constants.black_text,
-                                                13,
-                                                FontWeight.normal),
-                                          ),
-                                        ),
-                                        Text(
-                                          Constants.size,
-                                          style: Text_Style.text_Theme(
-                                              Constants.grey_text,
-                                              13,
-                                              FontWeight.normal),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 15),
-                                          child: Text(
-                                            "L",
-                                            style: Text_Style.text_Theme(
-                                                Constants.black_text,
-                                                13,
-                                                FontWeight.normal),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 7, top: 7),
+                                      child: Row(
                                         children: [
-                                          Text(
-                                            Constants.unit,
-                                            style: Text_Style.text_Theme(
-                                                Constants.grey_text,
-                                                13,
-                                                FontWeight.normal),
-                                          ),
-                                          Text(
-                                            "1",
-                                            style: Text_Style.text_Theme(
-                                                Constants.black_text,
-                                                14,
-                                                FontWeight.bold),
-                                          ),
+                                          !snapshot.hasChild(Constants.dColor)
+                                              ? const SizedBox()
+                                              : Row(
+                                                  children: [
+                                                    Text(
+                                                      Constants.color,
+                                                      style:
+                                                          Text_Style.text_Theme(
+                                                              Constants
+                                                                  .grey_text,
+                                                              13,
+                                                              FontWeight
+                                                                  .normal),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 15),
+                                                      child: Text(
+                                                        snapshot
+                                                            .child(Constants
+                                                                .dColor)
+                                                            .value
+                                                            .toString(),
+                                                        style: Text_Style
+                                                            .text_Theme(
+                                                                Constants
+                                                                    .black_text,
+                                                                13,
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                Constants.size,
+                                                style: Text_Style.text_Theme(
+                                                    Constants.grey_text,
+                                                    13,
+                                                    FontWeight.normal),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 15),
+                                                child: Text(
+                                                  !snapshot.hasChild(
+                                                          Constants.dSize)
+                                                      ? "Free Size"
+                                                      : snapshot
+                                                          .child(
+                                                              Constants.dSize)
+                                                          .value
+                                                          .toString(),
+                                                  style: Text_Style.text_Theme(
+                                                    Constants.black_text,
+                                                    13,
+                                                    FontWeight.normal,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          )
                                         ],
                                       ),
-                                      Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 10),
-                                          child: Text(
-                                            "51\$",
-                                            style: Text_Style.text_Theme(
-                                                Constants.black_text,
-                                                20,
-                                                FontWeight.bold),
-                                          ))
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              Constants.unit,
+                                              style: Text_Style.text_Theme(
+                                                  Constants.grey_text,
+                                                  13,
+                                                  FontWeight.normal),
+                                            ),
+                                            Text(
+                                              snapshot
+                                                  .child(Constants.dQuantity)
+                                                  .value
+                                                  .toString(),
+                                              style: Text_Style.text_Theme(
+                                                  Constants.black_text,
+                                                  14,
+                                                  FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 10),
+                                            child: Text(
+                                              "${snapshot.child(Constants.dSPrice).value}\$",
+                                              style: Text_Style.text_Theme(
+                                                  Constants.black_text,
+                                                  20,
+                                                  FontWeight.bold),
+                                            ))
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -217,7 +287,10 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
               Text(
                 Constants.ord_info,
                 style: Text_Style.text_Theme(
-                    Constants.black_text, 14, FontWeight.w600),
+                  Constants.black_text,
+                  14,
+                  FontWeight.w600,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 15, bottom: 10),
@@ -228,15 +301,21 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                     Text(
                       Constants.shipp_add,
                       style: Text_Style.text_Theme(
-                          Constants.grey_text, 14, FontWeight.w200),
+                        Constants.grey_text,
+                        14,
+                        FontWeight.w200,
+                      ),
                     ),
                     Expanded(
                       child: Text(
                         textAlign: TextAlign.right,
                         softWrap: true,
-                        "3 Newbridge Court ,Chino Hills, CA 91709, United States",
+                        widget.address,
                         style: Text_Style.text_Theme(
-                            Constants.black_text, 14, FontWeight.normal),
+                          Constants.black_text,
+                          14,
+                          FontWeight.normal,
+                        ),
                       ),
                     )
                   ],
@@ -244,11 +323,23 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     Constants.pay_meth,
                     style: Text_Style.text_Theme(
-                        Constants.grey_text, 14, FontWeight.w200),
+                      Constants.grey_text,
+                      14,
+                      FontWeight.w200,
+                    ),
+                  ),
+                  Text(
+                    widget.payment,
+                    style: Text_Style.text_Theme(
+                      Constants.black_text,
+                      14,
+                      FontWeight.normal,
+                    ),
                   ),
                 ],
               ),
@@ -261,13 +352,19 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                     Text(
                       Constants.del_method,
                       style: Text_Style.text_Theme(
-                          Constants.grey_text, 14, FontWeight.w200),
+                        Constants.grey_text,
+                        14,
+                        FontWeight.w200,
+                      ),
                     ),
                     Text(
                       softWrap: true,
-                      "FedEx, 3 days, 15\$",
+                      "FedEx, 3 days",
                       style: Text_Style.text_Theme(
-                          Constants.black_text, 14, FontWeight.normal),
+                        Constants.black_text,
+                        14,
+                        FontWeight.normal,
+                      ),
                     )
                   ],
                 ),
@@ -279,13 +376,19 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                   Text(
                     Constants.discount,
                     style: Text_Style.text_Theme(
-                        Constants.grey_text, 14, FontWeight.w200),
+                      Constants.grey_text,
+                      14,
+                      FontWeight.w200,
+                    ),
                   ),
                   Text(
                     softWrap: true,
                     "10%, Personal promo code",
                     style: Text_Style.text_Theme(
-                        Constants.black_text, 14, FontWeight.normal),
+                      Constants.black_text,
+                      14,
+                      FontWeight.normal,
+                    ),
                   )
                 ],
               ),
@@ -296,19 +399,49 @@ class _MyDeclinedProductState extends State<MyDeclinedProduct> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      Constants.tot_amt,
+                      Constants.total_amt,
                       style: Text_Style.text_Theme(
-                          Constants.grey_text, 14, FontWeight.w200),
+                        Constants.grey_text,
+                        14,
+                        FontWeight.w200,
+                      ),
                     ),
                     Text(
                       softWrap: true,
-                      "133\$",
+                      "${widget.total}\$",
                       style: Text_Style.text_Theme(
-                          Constants.black_text, 14, FontWeight.normal),
+                        Constants.black_text,
+                        14,
+                        FontWeight.normal,
+                      ),
                     )
                   ],
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  OutlinedButton(
+                      onPressed: () {
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //   builder: (context) => MyProcessingProduct(),
+                        // ));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
+                        child: Text(
+                          Constants.reorder,
+                          style: Text_Style.text_Theme(
+                            Constants.black_text,
+                            17,
+                            FontWeight.w600,
+                          ),
+                        ),
+                      )),
+                  Button_Style.button_Theme(Constants.lea_feed)
+                ],
+              )
             ],
           ),
         ),

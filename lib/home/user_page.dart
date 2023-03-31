@@ -38,22 +38,22 @@ class _MyUserPageState extends State<MyUserPage> {
                     borderRadius: BorderRadius.circular(
                         MediaQuery.of(context).size.height / 100)),
                 child: ListTile(
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
+                  leading: ClipOval(
+                      child: Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.red,
                     child: Image.network(
-                      snapshot.child('image').value.toString(),
-                      fit: BoxFit.fill,
-                      height: 100,
-                      width: 100,
-                    ),
-                  ),
+                        snapshot.child(Constants.dProimage).value.toString(),
+                        fit: BoxFit.fill),
+                  )),
                   title: Text(
-                    snapshot.child('name').value.toString(),
+                    snapshot.child(Constants.duname).value.toString(),
                     style: Text_Style.text_Theme(
                         Constants.black_text, 18, FontWeight.bold),
                   ),
                   subtitle: Text(
-                    snapshot.child('email').value.toString(),
+                    snapshot.child(Constants.demail).value.toString(),
                     style: Text_Style.text_Theme(
                         Constants.black_text, 16, FontWeight.w500),
                   ),

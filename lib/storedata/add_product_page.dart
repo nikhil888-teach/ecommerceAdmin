@@ -381,8 +381,8 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                                 addProductDataToDatabase(
                                     files,
                                     pname.text,
-                                    pprice.text,
-                                    pdprice.text,
+                                    int.parse(pprice.text),
+                                    int.parse(pdprice.text),
                                     pbname.text,
                                     pdesc.text,
                                     selectCategory,
@@ -404,8 +404,8 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   Future<void> addProductDataToDatabase(
       List<XFile>? files,
       String name,
-      String price,
-      String dprice,
+      int price,
+      int dprice,
       String bname,
       String desc,
       String category,

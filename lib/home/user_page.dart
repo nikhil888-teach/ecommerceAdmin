@@ -17,6 +17,7 @@ class _MyUserPageState extends State<MyUserPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          leadingWidth: 0,
           backgroundColor: Colors.white,
           title: Text(Constants.user,
               style: Text_Style.text_Theme(
@@ -38,15 +39,21 @@ class _MyUserPageState extends State<MyUserPage> {
                     borderRadius: BorderRadius.circular(
                         MediaQuery.of(context).size.height / 100)),
                 child: ListTile(
-                  leading: ClipOval(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.red,
+                    child: ClipOval(
                       child: Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.red,
-                    child: Image.network(
-                        snapshot.child(Constants.dProimage).value.toString(),
-                        fit: BoxFit.fill),
-                  )),
+                        color: Colors.red,
+                        height: 50,
+                        width: 50,
+                        child: Image.network(
+                          snapshot.child(Constants.dProimage).value.toString(),
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                  ),
                   title: Text(
                     snapshot.child(Constants.duname).value.toString(),
                     style: Text_Style.text_Theme(
@@ -55,7 +62,7 @@ class _MyUserPageState extends State<MyUserPage> {
                   subtitle: Text(
                     snapshot.child(Constants.demail).value.toString(),
                     style: Text_Style.text_Theme(
-                        Constants.black_text, 16, FontWeight.w500),
+                        Constants.black_text, 16, FontWeight.normal),
                   ),
                   // children: [
                   //   ClipRRect(

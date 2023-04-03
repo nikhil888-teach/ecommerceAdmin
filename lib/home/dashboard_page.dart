@@ -19,6 +19,7 @@ class _MyDashboardPageState extends State<MyDashboardPage>
   DatabaseReference ref = FirebaseDatabase.instance.ref();
   int liveProduct = 0;
   int totalUser = 0;
+  int totalOrders = 0;
 
   @override
   void initState() {
@@ -44,6 +45,13 @@ class _MyDashboardPageState extends State<MyDashboardPage>
         liveProduct = event.snapshot.children.length;
       });
     });
+    ref.child(Constants.dorder).onValue.listen((DatabaseEvent event) {
+      if (!mounted) return;
+
+      setState(() {
+        totalOrders = event.snapshot.children.length;
+      });
+    });
     ref.child(Constants.dUser).onValue.listen((DatabaseEvent event) {
       if (!mounted) return;
 
@@ -64,6 +72,7 @@ class _MyDashboardPageState extends State<MyDashboardPage>
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          leadingWidth: 0,
           backgroundColor: Colors.white,
           title: Text(Constants.dashboard,
               style: Text_Style.text_Theme(
@@ -181,9 +190,9 @@ class _MyDashboardPageState extends State<MyDashboardPage>
                                           const Duration(milliseconds: 600),
                                       opacity: animationController!.value,
                                       curve: Curves.easeIn,
-                                      child: const Text(
-                                        "72,540",
-                                        style: TextStyle(
+                                      child: Text(
+                                        totalOrders.toString(),
+                                        style: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 30),

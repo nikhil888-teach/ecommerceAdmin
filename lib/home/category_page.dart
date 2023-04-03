@@ -22,6 +22,7 @@ class _MyCategoryPageState extends State<MyCategoryPage> {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            leadingWidth: 0,
             backgroundColor: Colors.white,
             title: Text(Constants.category,
                 style: Text_Style.text_Theme(

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:adminpanelecommerce/home/main_page.dart';
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/button_theme.dart';
 import 'package:adminpanelecommerce/widgets/text_theme.dart';
@@ -53,43 +54,65 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     if (widget.productkey != null) {
-      DatabaseReference databaseReference = FirebaseDatabase.instance
-          .ref(Constants.products)
-          .child(widget.productkey.toString());
-      databaseReference.once().then((value) {
-        pnameController.text =
-            value.snapshot.child(Constants.dPname).value.toString();
-        ppriceController.text =
-            value.snapshot.child(Constants.dSPrice).value.toString();
-        pdpriceController.text =
-            value.snapshot.child(Constants.ddPrice).value.toString();
-        pbnameController.text =
-            value.snapshot.child(Constants.dBrand).value.toString();
-        pdescController.text =
-            value.snapshot.child(Constants.dDesc).value.toString();
-        value.snapshot.child(Constants.dColor).value == true
-            ? selectedColor = "Yes"
-            : selectedColor = "No";
-        value.snapshot.child(Constants.dSize).value == true
-            ? selectedSize = "Yes"
-            : selectedSize = "No";
-      }).then((value) {
-        DatabaseReference reference = FirebaseDatabase.instance
-            .ref(Constants.dProducts)
-            .child(widget.productkey.toString())
-            .child(Constants.dimages);
-        imagelinks.clear();
-        reference.onValue.listen((event) {
-          for (var element in event.snapshot.children) {
-            imagelinks.add(element.value.toString());
-          }
+      if (!mounted) return;
+      setState(() {
+        DatabaseReference databaseReference = FirebaseDatabase.instance
+            .ref(Constants.products)
+            .child(widget.productkey.toString());
+        databaseReference.once().then((value) {
+          pnameController.text =
+              value.snapshot.child(Constants.dPname).value.toString();
+          ppriceController.text =
+              value.snapshot.child(Constants.dSPrice).value.toString();
+          pdpriceController.text =
+              value.snapshot.child(Constants.ddPrice).value.toString();
+          pbnameController.text =
+              value.snapshot.child(Constants.dBrand).value.toString();
+          pdescController.text =
+              value.snapshot.child(Constants.dDesc).value.toString();
+          value.snapshot.child(Constants.dColor).value == true
+              ? selectedColor = "Yes"
+              : selectedColor = "No";
+          value.snapshot.child(Constants.dSize).value == true
+              ? selectedSize = "Yes"
+              : selectedSize = "No";
         });
       });
     }
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    DatabaseReference reference = FirebaseDatabase.instance
+        .ref(Constants.dProducts)
+        .child(widget.productkey.toString())
+        .child(Constants.dimages);
+    imagelinks.clear();
+    reference.once().then((value) {
+      for (var element in value.snapshot.children) {
+        if (!mounted) return;
+        setState(() {
+          imagelinks.add(element.value.toString());
+        });
+      }
+    });
+    // reference.onValue.listen((event) {
+    //   for (var element in event.snapshot.children) {
+    //     imagelinks.add(element.value.toString());
+    //   }
+    // });
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
-    databaseReference.child(selectCategory).onValue.listen((event) {
+    databaseReference.child(selectCategory).once().then((event) {
       Map<dynamic, dynamic>? values =
           event.snapshot.value as Map<dynamic, dynamic>?;
       if (values == null && values!.length == 1) {
@@ -97,12 +120,15 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
       }
       subCategories!.clear();
       values.forEach((key, value) {
-        subCategories!.add(value[Constants.dSubCategoryName]);
+        if (!mounted) return;
+        setState(() {
+          subCategories!.add(value[Constants.dSubCategoryName]);
+        });
       });
     });
-
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white,
           leadingWidth: 0,
@@ -435,15 +461,29 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                             setState(() {
                               validateAndSave();
                               if (imagelinks.isNotEmpty) {
-                                addProductDataToDatabase(
-                                    imagelinks,
-                                    pnameController.text,
-                                    int.parse(ppriceController.text),
-                                    int.parse(pdpriceController.text),
-                                    pbnameController.text,
-                                    pdescController.text,
-                                    selectCategory,
-                                    selectSubCategory);
+                                if (pnameController.text.isEmpty ||
+                                    ppriceController.text.isEmpty ||
+                                    pdpriceController.text.isEmpty ||
+                                    pbnameController.text.isEmpty ||
+                                    pdescController.text.isEmpty ||
+                                    selectSubCategory
+                                        .contains("Select subcategory")) {
+                                  ScaffoldMessenger.of(context)
+                                    ..hideCurrentSnackBar()
+                                    ..showSnackBar(const SnackBar(
+                                        content:
+                                            Text("Please fill all the field")));
+                                } else {
+                                  addProductDataToDatabase(
+                                      imagelinks,
+                                      pnameController.text,
+                                      int.parse(ppriceController.text),
+                                      int.parse(pdpriceController.text),
+                                      pbnameController.text,
+                                      pdescController.text,
+                                      selectCategory,
+                                      selectSubCategory);
+                                }
                               } else if (files == null ||
                                   pnameController.text.isEmpty ||
                                   ppriceController.text.isEmpty ||
@@ -518,9 +558,6 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
       }
     }
 
-    var now = DateTime.now();
-    var formatter = DateFormat('dd-MM-yyyy');
-    String formattedDate = formatter.format(now);
     if (widget.productkey == null) {
       DatabaseReference databaseReference =
           FirebaseDatabase.instance.ref(Constants.dProducts).push();
@@ -533,7 +570,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
         Constants.dDesc: desc,
         Constants.dGender: category,
         Constants.dType: subCategory,
-        Constants.dDate: formattedDate,
+        Constants.dDate: DateTime.now().toString(),
         Constants.dSize: selectedSize == "Yes" ? true : false,
         Constants.dColor: selectedColor == "Yes" ? true : false,
       }).catchError((onError) {
@@ -555,6 +592,11 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
           setState(() {
             loading = false;
           });
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MyMainPage(),
+              ));
         }).catchError((onError) {
           loading = false;
 
@@ -573,6 +615,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
         Constants.ddPrice: dprice,
         Constants.dBrand: bname,
         Constants.dDesc: desc,
+        Constants.dDate: DateTime.now().toString(),
         Constants.dGender: category,
         Constants.dType: subCategory,
         Constants.dSize: selectedSize == "Yes" ? true : false,
@@ -596,6 +639,11 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
           setState(() {
             loading = false;
           });
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MyMainPage(),
+              ));
         }).catchError((onError) {
           loading = false;
 

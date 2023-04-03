@@ -18,6 +18,7 @@ class _MyProductPageState extends State<MyProductPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          leadingWidth: 0,
           backgroundColor: Colors.white,
           title: Text(Constants.products,
               style: Text_Style.text_Theme(
@@ -142,7 +143,7 @@ class _MyProductPageState extends State<MyProductPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 5),
                                     child: Text(
-                                        "${snapshot.child(Constants.dSPrice).value}\$",
+                                        "${snapshot.child(Constants.ddPrice).value}\$",
                                         style: const TextStyle(
                                             color: Color(Constants.grey_text),
                                             fontSize: 14,

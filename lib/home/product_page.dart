@@ -64,7 +64,7 @@ class _MyProductPageState extends State<MyProductPage> {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Row(
                                 mainAxisAlignment:
@@ -80,6 +80,24 @@ class _MyProductPageState extends State<MyProductPage> {
                                           14,
                                           FontWeight.normal)),
                                   PopupMenuButton(
+                                    onSelected: (value) {
+                                      if (value == 0) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MyAddProductPage(
+                                                      defaultCategoryText:
+                                                          snapshot
+                                                              .child(Constants
+                                                                  .dType)
+                                                              .value
+                                                              .toString(),
+                                                      productkey: snapshot.key
+                                                          .toString()),
+                                            ));
+                                      }
+                                    },
                                     child: const SizedBox(
                                       height: 35,
                                       width: 45,
@@ -90,16 +108,23 @@ class _MyProductPageState extends State<MyProductPage> {
                                     ),
                                     itemBuilder: (context) => [
                                       const PopupMenuItem(
+                                          value: 0,
                                           child: Text(Constants.edit)),
-                                      const PopupMenuItem(
-                                          child: Text(Constants.delete))
+                                      PopupMenuItem(
+                                          onTap: () {
+                                            FirebaseDatabase.instance
+                                                .ref(Constants.dProducts)
+                                                .child(snapshot.key.toString())
+                                                .remove();
+                                          },
+                                          child: const Text(Constants.delete))
                                     ],
                                   ),
                                 ],
                               ),
                               Text(
                                 snapshot
-                                    .child(Constants.dDesc)
+                                    .child(Constants.dPname)
                                     .value
                                     .toString(),
                                 style: Text_Style.text_Theme(
@@ -143,7 +168,10 @@ class _MyProductPageState extends State<MyProductPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyAddProductPage(),
+                  builder: (context) => const MyAddProductPage(
+                    productkey: null,
+                    defaultCategoryText: null,
+                  ),
                 ));
           },
           backgroundColor: Colors.red,

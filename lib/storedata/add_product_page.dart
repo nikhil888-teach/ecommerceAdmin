@@ -13,7 +13,13 @@ import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MyAddProductPage extends StatefulWidget {
-  const MyAddProductPage({super.key});
+  const MyAddProductPage({
+    super.key,
+    required this.productkey,
+    required this.defaultCategoryText,
+  });
+  final String? productkey;
+  final String? defaultCategoryText;
 
   @override
   State<MyAddProductPage> createState() => _MyAddProductPageState();
@@ -21,11 +27,11 @@ class MyAddProductPage extends StatefulWidget {
 
 class _MyAddProductPageState extends State<MyAddProductPage> {
   String selectCategory = "Male";
-  TextEditingController pname = TextEditingController();
-  TextEditingController pprice = TextEditingController();
-  TextEditingController pdprice = TextEditingController();
-  TextEditingController pbname = TextEditingController();
-  TextEditingController pdesc = TextEditingController();
+  TextEditingController pnameController = TextEditingController();
+  TextEditingController ppriceController = TextEditingController();
+  TextEditingController pdpriceController = TextEditingController();
+  TextEditingController pbnameController = TextEditingController();
+  TextEditingController pdescController = TextEditingController();
   List<XFile>? files;
   ImagePicker imagePicker = ImagePicker();
   List<String>? subCategories = [];
@@ -34,6 +40,8 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   final _formKey = GlobalKey<FormState>();
   String selectedColor = "Yes";
   String selectedSize = "Yes";
+
+  List imagelinks = [];
 
   void validateAndSave() {
     final form = _formKey.currentState;
@@ -46,6 +54,40 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.productkey != null) {
+      DatabaseReference databaseReference = FirebaseDatabase.instance
+          .ref(Constants.products)
+          .child(widget.productkey.toString());
+      databaseReference.once().then((value) {
+        pnameController.text =
+            value.snapshot.child(Constants.dPname).value.toString();
+        ppriceController.text =
+            value.snapshot.child(Constants.dSPrice).value.toString();
+        pdpriceController.text =
+            value.snapshot.child(Constants.ddPrice).value.toString();
+        pbnameController.text =
+            value.snapshot.child(Constants.dBrand).value.toString();
+        pdescController.text =
+            value.snapshot.child(Constants.dDesc).value.toString();
+        value.snapshot.child(Constants.dColor).value == true
+            ? selectedColor = "Yes"
+            : selectedColor = "No";
+        value.snapshot.child(Constants.dSize).value == true
+            ? selectedSize = "Yes"
+            : selectedSize = "No";
+      }).then((value) {
+        DatabaseReference reference = FirebaseDatabase.instance
+            .ref(Constants.dProducts)
+            .child(widget.productkey.toString())
+            .child(Constants.dimages);
+        imagelinks.clear();
+        reference.onValue.listen((event) {
+          for (var element in event.snapshot.children) {
+            imagelinks.add(element.value.toString());
+          }
+        });
+      });
+    }
     DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
     databaseReference.child(selectCategory).onValue.listen((event) {
       Map<dynamic, dynamic>? values =
@@ -57,8 +99,6 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
       values.forEach((key, value) {
         subCategories!.add(value[Constants.dSubCategoryName]);
       });
-      if (!mounted) return;
-      setState(() {});
     });
 
     return SafeArea(
@@ -84,61 +124,11 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                         BoxDecoration(border: RDottedLineBorder.all(width: 2)),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: files == null
-                          ? Padding(
-                              padding: const EdgeInsets.all(25.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      Constants.selectImageText,
-                                      style: Text_Style.text_Theme(
-                                          Constants.black_text,
-                                          14,
-                                          FontWeight.bold),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        List<XFile> selectedImages =
-                                            await imagePicker.pickMultiImage();
-                                        print(selectedImages);
-                                        if (!mounted) return;
-                                        setState(() {
-                                          if (selectedImages.length > 3) {
-                                            ScaffoldMessenger.of(context)
-                                              ..hideCurrentSnackBar()
-                                              ..showSnackBar(const SnackBar(
-                                                  content: Text(
-                                                      "Please select only three images")));
-                                          } else if (selectedImages.isEmpty) {
-                                            ScaffoldMessenger.of(context)
-                                              ..hideCurrentSnackBar()
-                                              ..showSnackBar(const SnackBar(
-                                                  content: Text(
-                                                      "Please select images")));
-                                          } else {
-                                            files = selectedImages;
-                                          }
-                                        });
-                                      },
-                                      child: const Icon(
-                                        Icons.add_a_photo_outlined,
-                                        color: Colors.red,
-                                        size: 40,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          : Wrap(
+                      child: imagelinks.isNotEmpty && files == null
+                          ? Wrap(
                               alignment: WrapAlignment.spaceEvenly,
                               children: List.generate(
-                                files!.length,
+                                imagelinks.length,
                                 (index) => Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 5),
@@ -148,8 +138,8 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(5.0),
                                         child: ClipOval(
-                                          child: Image.file(
-                                            File(files![index].path),
+                                          child: Image.network(
+                                            imagelinks[index],
                                             fit: BoxFit.cover,
                                             height: 100,
                                             width: 100,
@@ -160,7 +150,85 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                                   ),
                                 ),
                               ),
-                            ),
+                            )
+                          : files == null
+                              ? Padding(
+                                  padding: const EdgeInsets.all(25.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Center(
+                                        child: Text(
+                                          Constants.selectImageText,
+                                          style: Text_Style.text_Theme(
+                                              Constants.black_text,
+                                              14,
+                                              FontWeight.bold),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            List<XFile> selectedImages =
+                                                await imagePicker
+                                                    .pickMultiImage();
+
+                                            if (selectedImages.length > 3) {
+                                              ScaffoldMessenger.of(context)
+                                                ..hideCurrentSnackBar()
+                                                ..showSnackBar(const SnackBar(
+                                                    content: Text(
+                                                        "Please select only three images")));
+                                            } else if (selectedImages.isEmpty) {
+                                              ScaffoldMessenger.of(context)
+                                                ..hideCurrentSnackBar()
+                                                ..showSnackBar(const SnackBar(
+                                                    content: Text(
+                                                        "Please select images")));
+                                            } else {
+                                              files = selectedImages;
+                                              if (!mounted) return;
+                                              setState(() {});
+                                            }
+                                          },
+                                          child: const Icon(
+                                            Icons.add_a_photo_outlined,
+                                            color: Colors.red,
+                                            size: 40,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Wrap(
+                                  alignment: WrapAlignment.spaceEvenly,
+                                  children: List.generate(
+                                    files!.length,
+                                    (index) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      child: ClipOval(
+                                        child: Container(
+                                          color: Colors.red,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: ClipOval(
+                                              child: Image.file(
+                                                File(files![index].path),
+                                                fit: BoxFit.cover,
+                                                height: 100,
+                                                width: 100,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                     ),
                   ),
                   Padding(
@@ -171,28 +239,28 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                           Constants.black_text, 16, FontWeight.bold),
                     ),
                   ),
-                  Textformfield_style.textField(
-                      pname, Constants.productName, TextInputType.name),
+                  Textformfield_style.textField(pnameController,
+                      Constants.productName, TextInputType.name),
                   const SizedBox(
                     height: 8,
                   ),
                   Textformfield_style.textField(
-                      pprice, Constants.price, TextInputType.number),
+                      ppriceController, Constants.price, TextInputType.number),
                   const SizedBox(
                     height: 8,
                   ),
-                  Textformfield_style.textField(
-                      pdprice, Constants.dprice, TextInputType.number),
+                  Textformfield_style.textField(pdpriceController,
+                      Constants.dprice, TextInputType.number),
                   const SizedBox(
                     height: 8,
                   ),
-                  Textformfield_style.textField(
-                      pbname, Constants.brandName, TextInputType.name),
+                  Textformfield_style.textField(pbnameController,
+                      Constants.brandName, TextInputType.name),
                   const SizedBox(
                     height: 8,
                   ),
-                  Textformfield_style.textField(
-                      pdesc, Constants.productDesc, TextInputType.text),
+                  Textformfield_style.textField(pdescController,
+                      Constants.productDesc, TextInputType.text),
                   const SizedBox(
                     height: 8,
                   ),
@@ -226,7 +294,9 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                           color: Colors.white,
                           elevation: 2,
                           child: DropdownButtonFormField(
-                            hint: const Text('Select subcategory'),
+                            hint: Text(widget.productkey != null
+                                ? widget.defaultCategoryText.toString()
+                                : 'Select subcategory'),
                             decoration: const InputDecoration(
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none)),
@@ -364,12 +434,22 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                             if (!mounted) return;
                             setState(() {
                               validateAndSave();
-                              if (files == null ||
-                                  pname.text.isEmpty ||
-                                  pprice.text.isEmpty ||
-                                  pdprice.text.isEmpty ||
-                                  pbname.text.isEmpty ||
-                                  pdesc.text.isEmpty ||
+                              if (imagelinks.isNotEmpty) {
+                                addProductDataToDatabase(
+                                    imagelinks,
+                                    pnameController.text,
+                                    int.parse(ppriceController.text),
+                                    int.parse(pdpriceController.text),
+                                    pbnameController.text,
+                                    pdescController.text,
+                                    selectCategory,
+                                    selectSubCategory);
+                              } else if (files == null ||
+                                  pnameController.text.isEmpty ||
+                                  ppriceController.text.isEmpty ||
+                                  pdpriceController.text.isEmpty ||
+                                  pbnameController.text.isEmpty ||
+                                  pdescController.text.isEmpty ||
                                   selectSubCategory
                                       .contains("Select subcategory")) {
                                 ScaffoldMessenger.of(context)
@@ -380,18 +460,20 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                               } else {
                                 addProductDataToDatabase(
                                     files,
-                                    pname.text,
-                                    int.parse(pprice.text),
-                                    int.parse(pdprice.text),
-                                    pbname.text,
-                                    pdesc.text,
+                                    pnameController.text,
+                                    int.parse(ppriceController.text),
+                                    int.parse(pdpriceController.text),
+                                    pbnameController.text,
+                                    pdescController.text,
                                     selectCategory,
                                     selectSubCategory);
                               }
                             });
                           },
-                          child:
-                              Button_Style.button_Theme(Constants.addProduct))
+                          child: Button_Style.button_Theme(
+                              widget.productkey != null
+                                  ? Constants.updateProduct
+                                  : Constants.addProduct))
                 ],
               ),
             ),
@@ -402,7 +484,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   }
 
   Future<void> addProductDataToDatabase(
-      List<XFile>? files,
+      List? files,
       String name,
       int price,
       int dprice,
@@ -412,70 +494,116 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
       String subCategory) async {
     loading = true;
     List imageUrls = [];
-    for (var i = 0; i < files!.length; i++) {
-      Reference reference = FirebaseStorage.instance.ref(
-          "/Products/$category/$subCategory/$name${Random().nextInt(100)}");
+    if (imagelinks.isEmpty) {
+      for (var i = 0; i < files!.length; i++) {
+        Reference reference = FirebaseStorage.instance.ref(
+            "/Products/$category/$subCategory/$name${Random().nextInt(100)}");
 
-      UploadTask uploadTask = reference.putFile(File(files[i].path));
-      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
-      var imagepath = taskSnapshot.ref.getDownloadURL().catchError((onError) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(onError.toString())));
-        if (!mounted) {
-          setState(() {
-            loading = false;
-          });
-        }
-      });
+        UploadTask uploadTask = reference.putFile(File(files[i].path));
+        TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+        var imagepath = taskSnapshot.ref.getDownloadURL().catchError((onError) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(onError.toString())));
+          if (!mounted) {
+            setState(() {
+              loading = false;
+            });
+          }
+        });
 
-      imageUrls.add(imagepath);
-      if (!mounted) return;
-      setState(() {});
+        imageUrls.add(imagepath);
+        if (!mounted) return;
+        setState(() {});
+      }
     }
-    DatabaseReference databaseReference =
-        FirebaseDatabase.instance.ref(Constants.dProducts).push();
+
     var now = DateTime.now();
     var formatter = DateFormat('dd-MM-yyyy');
     String formattedDate = formatter.format(now);
-    databaseReference.update({
-      Constants.dId: databaseReference.key,
-      Constants.dPname: name,
-      Constants.dSPrice: price,
-      Constants.ddPrice: dprice,
-      Constants.dBrand: bname,
-      Constants.dDesc: desc,
-      Constants.dGender: category,
-      Constants.dType: subCategory,
-      Constants.dDate: formattedDate,
-      Constants.dSize: selectedSize == "Yes" ? true : false,
-      Constants.dColor: selectedColor == "Yes" ? true : false,
-    }).catchError((onError) {
-      if (!mounted) return;
-
-      setState(() {
-        loading = false;
-      });
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(onError.toString())));
-    });
-    for (var i = 0; i < imageUrls.length; i++) {
-      databaseReference
-          .child(Constants.dimages)
-          .update({i.toString(): await imageUrls[i]}).then((value) {
+    if (widget.productkey == null) {
+      DatabaseReference databaseReference =
+          FirebaseDatabase.instance.ref(Constants.dProducts).push();
+      databaseReference.update({
+        Constants.dId: databaseReference.key,
+        Constants.dPname: name,
+        Constants.dSPrice: price,
+        Constants.ddPrice: dprice,
+        Constants.dBrand: bname,
+        Constants.dDesc: desc,
+        Constants.dGender: category,
+        Constants.dType: subCategory,
+        Constants.dDate: formattedDate,
+        Constants.dSize: selectedSize == "Yes" ? true : false,
+        Constants.dColor: selectedColor == "Yes" ? true : false,
+      }).catchError((onError) {
         if (!mounted) return;
 
         setState(() {
           loading = false;
         });
-      }).catchError((onError) {
-        loading = false;
-
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(onError.toString())));
       });
+      for (var i = 0; i < imageUrls.length; i++) {
+        databaseReference
+            .child(Constants.dimages)
+            .update({i.toString(): await imageUrls[i]}).then((value) {
+          if (!mounted) return;
+
+          setState(() {
+            loading = false;
+          });
+        }).catchError((onError) {
+          loading = false;
+
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(onError.toString())));
+        });
+      }
+    } else {
+      DatabaseReference databaseReference = FirebaseDatabase.instance
+          .ref(Constants.dProducts)
+          .child(widget.productkey.toString());
+      databaseReference.update({
+        Constants.dPname: name,
+        Constants.dSPrice: price,
+        Constants.ddPrice: dprice,
+        Constants.dBrand: bname,
+        Constants.dDesc: desc,
+        Constants.dGender: category,
+        Constants.dType: subCategory,
+        Constants.dSize: selectedSize == "Yes" ? true : false,
+        Constants.dColor: selectedColor == "Yes" ? true : false,
+      }).catchError((onError) {
+        if (!mounted) return;
+
+        setState(() {
+          loading = false;
+        });
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(onError.toString())));
+      });
+      for (var i = 0; i < imagelinks.length; i++) {
+        databaseReference
+            .child(Constants.dimages)
+            .update({i.toString(): await imagelinks[i]}).then((value) {
+          if (!mounted) return;
+
+          setState(() {
+            loading = false;
+          });
+        }).catchError((onError) {
+          loading = false;
+
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(onError.toString())));
+        });
+      }
     }
   }
 }

@@ -65,6 +65,7 @@ class Constants {
   static const productDesc = "Product Description";
   static const selectImageText = "Select Multiple photos of your product";
   static const display = "Option display or Not";
+  static const updateProduct = "Update Product";
 
   //user page
   static const user = "Users";

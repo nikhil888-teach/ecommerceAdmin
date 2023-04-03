@@ -107,179 +107,173 @@ class _MyAcceptedProductState extends State<MyAcceptedProduct> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),
-                child: Container(
-                  child: FirebaseAnimatedList(
-                    query: FirebaseDatabase.instance
-                        .ref(Constants.dorder)
-                        .child(widget.orderKey)
-                        .child(Constants.dProducts),
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, snapshot, animation, index) =>
-                        Padding(
-                      padding: const EdgeInsets.only(bottom: 15),
-                      child: Card(
-                        child: Row(
-                          children: [
-                            Ink(
-                                decoration: const BoxDecoration(boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black12,
-                                      offset: Offset(0, 0),
-                                      blurRadius: 5),
-                                ]),
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(4),
-                                      bottomLeft: Radius.circular(4)),
-                                  child: Image.network(
-                                    snapshot
-                                        .child(Constants.dimages)
-                                        .value
-                                        .toString(),
-                                    fit: BoxFit.fill,
-                                    color: Colors.grey.shade300,
-                                    colorBlendMode: BlendMode.multiply,
-                                    height: 105,
-                                    width: 105,
-                                  ),
-                                )),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 5),
-                                      child: Text(
-                                        snapshot
-                                            .child(Constants.dPname)
-                                            .value
-                                            .toString(),
-                                        style: Text_Style.text_Theme(
-                                          Constants.black_text,
-                                          16,
-                                          FontWeight.bold,
-                                        ),
+                child: FirebaseAnimatedList(
+                  query: FirebaseDatabase.instance
+                      .ref(Constants.dorder)
+                      .child(widget.orderKey)
+                      .child(Constants.dProducts),
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, snapshot, animation, index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: Card(
+                      child: Row(
+                        children: [
+                          Ink(
+                              decoration: const BoxDecoration(boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black12,
+                                    offset: Offset(0, 0),
+                                    blurRadius: 5),
+                              ]),
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    bottomLeft: Radius.circular(4)),
+                                child: Image.network(
+                                  snapshot
+                                      .child(Constants.dimages)
+                                      .value
+                                      .toString(),
+                                  fit: BoxFit.fill,
+                                  color: Colors.grey.shade300,
+                                  colorBlendMode: BlendMode.multiply,
+                                  height: 105,
+                                  width: 105,
+                                ),
+                              )),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: Text(
+                                      snapshot
+                                          .child(Constants.dPname)
+                                          .value
+                                          .toString(),
+                                      style: Text_Style.text_Theme(
+                                        Constants.black_text,
+                                        16,
+                                        FontWeight.bold,
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 7, top: 7),
-                                      child: Row(
-                                        children: [
-                                          !snapshot.hasChild(Constants.dColor)
-                                              ? const SizedBox()
-                                              : Row(
-                                                  children: [
-                                                    Text(
-                                                      Constants.color,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 7, top: 7),
+                                    child: Row(
+                                      children: [
+                                        !snapshot.hasChild(Constants.dColor)
+                                            ? const SizedBox()
+                                            : Row(
+                                                children: [
+                                                  Text(
+                                                    Constants.color,
+                                                    style:
+                                                        Text_Style.text_Theme(
+                                                            Constants.grey_text,
+                                                            13,
+                                                            FontWeight.normal),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 15),
+                                                    child: Text(
+                                                      snapshot
+                                                          .child(
+                                                              Constants.dColor)
+                                                          .value
+                                                          .toString(),
                                                       style:
                                                           Text_Style.text_Theme(
                                                               Constants
-                                                                  .grey_text,
+                                                                  .black_text,
                                                               13,
                                                               FontWeight
                                                                   .normal),
                                                     ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 15),
-                                                      child: Text(
-                                                        snapshot
-                                                            .child(Constants
-                                                                .dColor)
-                                                            .value
-                                                            .toString(),
-                                                        style: Text_Style
-                                                            .text_Theme(
-                                                                Constants
-                                                                    .black_text,
-                                                                13,
-                                                                FontWeight
-                                                                    .normal),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                Constants.size,
-                                                style: Text_Style.text_Theme(
-                                                    Constants.grey_text,
-                                                    13,
-                                                    FontWeight.normal),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 15),
-                                                child: Text(
-                                                  !snapshot.hasChild(
-                                                          Constants.dSize)
-                                                      ? "Free Size"
-                                                      : snapshot
-                                                          .child(
-                                                              Constants.dSize)
-                                                          .value
-                                                          .toString(),
-                                                  style: Text_Style.text_Theme(
-                                                    Constants.black_text,
-                                                    13,
-                                                    FontWeight.normal,
                                                   ),
-                                                ),
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
+                                                ],
+                                              ),
                                         Row(
                                           children: [
                                             Text(
-                                              Constants.unit,
+                                              Constants.size,
                                               style: Text_Style.text_Theme(
                                                   Constants.grey_text,
                                                   13,
                                                   FontWeight.normal),
                                             ),
-                                            Text(
-                                              snapshot
-                                                  .child(Constants.dQuantity)
-                                                  .value
-                                                  .toString(),
-                                              style: Text_Style.text_Theme(
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 15),
+                                              child: Text(
+                                                !snapshot.hasChild(
+                                                        Constants.dSize)
+                                                    ? "Free Size"
+                                                    : snapshot
+                                                        .child(Constants.dSize)
+                                                        .value
+                                                        .toString(),
+                                                style: Text_Style.text_Theme(
                                                   Constants.black_text,
-                                                  14,
-                                                  FontWeight.bold),
-                                            ),
+                                                  13,
+                                                  FontWeight.normal,
+                                                ),
+                                              ),
+                                            )
                                           ],
-                                        ),
-                                        Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 10),
-                                            child: Text(
-                                              "${snapshot.child(Constants.dSPrice).value}\$",
-                                              style: Text_Style.text_Theme(
-                                                  Constants.black_text,
-                                                  20,
-                                                  FontWeight.bold),
-                                            ))
+                                        )
                                       ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            Constants.unit,
+                                            style: Text_Style.text_Theme(
+                                                Constants.grey_text,
+                                                13,
+                                                FontWeight.normal),
+                                          ),
+                                          Text(
+                                            snapshot
+                                                .child(Constants.dQuantity)
+                                                .value
+                                                .toString(),
+                                            style: Text_Style.text_Theme(
+                                                Constants.black_text,
+                                                14,
+                                                FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 10),
+                                          child: Text(
+                                            "${snapshot.child(Constants.dSPrice).value}\$",
+                                            style: Text_Style.text_Theme(
+                                                Constants.black_text,
+                                                20,
+                                                FontWeight.bold),
+                                          ))
+                                    ],
+                                  ),
+                                ],
                               ),
-                            )
-                          ],
-                        ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),

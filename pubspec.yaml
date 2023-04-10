@@ -43,9 +43,11 @@ dependencies:
   r_dotted_line_border: ^0.1.1
 
 dev_dependencies:
+  flutter_colorpicker: ^1.0.3
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+  synchronized: ^3.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

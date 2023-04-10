@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-
 import 'package:adminpanelecommerce/home/main_page.dart';
 import 'package:adminpanelecommerce/utils/constants.dart';
 import 'package:adminpanelecommerce/widgets/button_theme.dart';
@@ -9,9 +8,10 @@ import 'package:adminpanelecommerce/widgets/textformfield_theme.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:synchronized/synchronized.dart';
 
 class MyAddProductPage extends StatefulWidget {
   const MyAddProductPage({
@@ -39,10 +39,11 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   String selectSubCategory = "Select subcategory";
   bool loading = false;
   final _formKey = GlobalKey<FormState>();
-  String selectedColor = "Yes";
-  String selectedSize = "Yes";
+  String selectedColor = "No";
+  String selectedSize = "No";
 
   List imagelinks = [];
+  List<Color> selectesColorList = [];
 
   void validateAndSave() {
     final form = _formKey.currentState;
@@ -354,6 +355,9 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                   const SizedBox(
                     height: 8,
                   ),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -377,6 +381,40 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                               setState(() {
                                 selectedColor = value!;
                               });
+                              if (value == "Yes") {
+                                // selectesColorList.clear();
+                                Lock lock = Lock();
+                                showModalBottomSheet(
+                                  useSafeArea: true,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(30),
+                                          topRight: Radius.circular(30))),
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) {
+                                    return FractionallySizedBox(
+                                      heightFactor: 0.7,
+                                      child: MultipleChoiceBlockPicker(
+                                        // useInShowDialog: true,
+                                        pickerColors: selectesColorList,
+                                        onColorsChanged: (value) {
+                                          if (value.isNotEmpty) {
+                                            if (!mounted) return;
+                                            setState(() {
+                                              selectesColorList
+                                                  .add(value as Color);
+                                            });
+
+                                            print(selectesColorList);
+                                            print(value);
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
                             },
                           ),
                           const Text("Yes"),
@@ -457,58 +495,70 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                         )
                       : InkWell(
                           onTap: () {
-                            if (!mounted) return;
-                            setState(() {
-                              validateAndSave();
-                              if (imagelinks.isNotEmpty) {
-                                if (pnameController.text.isEmpty ||
-                                    ppriceController.text.isEmpty ||
-                                    pdpriceController.text.isEmpty ||
-                                    pbnameController.text.isEmpty ||
-                                    pdescController.text.isEmpty ||
-                                    selectSubCategory
-                                        .contains("Select subcategory")) {
-                                  ScaffoldMessenger.of(context)
-                                    ..hideCurrentSnackBar()
-                                    ..showSnackBar(const SnackBar(
-                                        content:
-                                            Text("Please fill all the field")));
-                                } else {
-                                  addProductDataToDatabase(
-                                      imagelinks,
-                                      pnameController.text,
-                                      int.parse(ppriceController.text),
-                                      int.parse(pdpriceController.text),
-                                      pbnameController.text,
-                                      pdescController.text,
-                                      selectCategory,
-                                      selectSubCategory);
-                                }
-                              } else if (files == null ||
-                                  pnameController.text.isEmpty ||
-                                  ppriceController.text.isEmpty ||
-                                  pdpriceController.text.isEmpty ||
-                                  pbnameController.text.isEmpty ||
-                                  pdescController.text.isEmpty ||
-                                  selectSubCategory
-                                      .contains("Select subcategory")) {
-                                ScaffoldMessenger.of(context)
-                                  ..hideCurrentSnackBar()
-                                  ..showSnackBar(const SnackBar(
-                                      content:
-                                          Text("Please fill all the field")));
-                              } else {
-                                addProductDataToDatabase(
-                                    files,
-                                    pnameController.text,
-                                    int.parse(ppriceController.text),
-                                    int.parse(pdpriceController.text),
-                                    pbnameController.text,
-                                    pdescController.text,
-                                    selectCategory,
-                                    selectSubCategory);
-                              }
-                            });
+                            // if (!mounted) return;
+                            // setState(() {
+                            //   validateAndSave();
+                            //   if (imagelinks.isNotEmpty) {
+                            //     if (pnameController.text.isEmpty ||
+                            //         ppriceController.text.isEmpty ||
+                            //         pdpriceController.text.isEmpty ||
+                            //         pbnameController.text.isEmpty ||
+                            //         pdescController.text.isEmpty ||
+                            //         selectSubCategory
+                            //             .contains("Select subcategory")) {
+                            //       ScaffoldMessenger.of(context)
+                            //         ..hideCurrentSnackBar()
+                            //         ..showSnackBar(const SnackBar(
+                            //             content:
+                            //                 Text("Please fill all the field")));
+                            //     } else {
+                            //       addProductDataToDatabase(
+                            //           imagelinks,
+                            //           pnameController.text,
+                            //           int.parse(ppriceController.text),
+                            //           int.parse(pdpriceController.text),
+                            //           pbnameController.text,
+                            //           pdescController.text,
+                            //           selectCategory,
+                            //           selectSubCategory);
+                            //     }
+                            //   } else if (files == null ||
+                            //       pnameController.text.isEmpty ||
+                            //       ppriceController.text.isEmpty ||
+                            //       pdpriceController.text.isEmpty ||
+                            //       pbnameController.text.isEmpty ||
+                            //       pdescController.text.isEmpty ||
+                            //       selectSubCategory
+                            //           .contains("Select subcategory")) {
+                            //     ScaffoldMessenger.of(context)
+                            //       ..hideCurrentSnackBar()
+                            //       ..showSnackBar(const SnackBar(
+                            //           content:
+                            //               Text("Please fill all the field")));
+                            //   } else {
+                            //     addProductDataToDatabase(
+                            //         files,
+                            //         pnameController.text,
+                            //         int.parse(ppriceController.text),
+                            //         int.parse(pdpriceController.text),
+                            //         pbnameController.text,
+                            //         pdescController.text,
+                            //         selectCategory,
+                            //         selectSubCategory);
+                            //   }
+                            // });
+                            // List uniqc = selectesColorList.toSet().toList();
+
+                            // selectesColorList.remove(2);
+                            // for (var element2 in selectesColorList) {
+                            //   for (var element in uniqc) {
+                            //     if (element2 != element) {
+                            //       uniqc.add(element2);
+                            //     }
+                            //   }
+                            // }
+                            // uniqc.addAll(uniq);
+                            // print(uniqc);
                           },
                           child: Button_Style.button_Theme(
                               widget.productkey != null

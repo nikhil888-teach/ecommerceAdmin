@@ -98,6 +98,9 @@ class Constants {
   static const duname = "Name";
   static const dProimage = "ProfileIamge";
   static const demail = "Email";
+  static const dOrderCount = "OrderCount";
+  static const dColorLists = "ColorLists";
+
   //COLOR
   // ignore: constant_identifier_names
   static const red_text = 0xffDB3022;

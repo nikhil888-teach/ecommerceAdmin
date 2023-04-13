@@ -43,7 +43,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
   String selectedSize = "No";
 
   List imagelinks = [];
-  List<Color> selectesColorList = [];
+  List<Color> colorList = [];
 
   void validateAndSave() {
     final form = _formKey.currentState;
@@ -79,6 +79,10 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
           value.snapshot.child(Constants.dSize).value == true
               ? selectedSize = "Yes"
               : selectedSize = "No";
+          selectCategory =
+              value.snapshot.child(Constants.dGender).value.toString();
+          selectSubCategory =
+              value.snapshot.child(Constants.dType).value.toString();
         });
       });
     }
@@ -101,12 +105,6 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
         });
       }
     });
-    // reference.onValue.listen((event) {
-    //   for (var element in event.snapshot.children) {
-    //     imagelinks.add(element.value.toString());
-    //   }
-    // });
-
     super.didChangeDependencies();
   }
 
@@ -383,7 +381,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                               });
                               if (value == "Yes") {
                                 // selectesColorList.clear();
-                                Lock lock = Lock();
+
                                 showModalBottomSheet(
                                   useSafeArea: true,
                                   shape: const RoundedRectangleBorder(
@@ -396,20 +394,8 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                                     return FractionallySizedBox(
                                       heightFactor: 0.7,
                                       child: MultipleChoiceBlockPicker(
-                                        // useInShowDialog: true,
-                                        pickerColors: selectesColorList,
-                                        onColorsChanged: (value) {
-                                          if (value.isNotEmpty) {
-                                            if (!mounted) return;
-                                            setState(() {
-                                              selectesColorList
-                                                  .add(value as Color);
-                                            });
-
-                                            print(selectesColorList);
-                                            print(value);
-                                          }
-                                        },
+                                        pickerColors: colorList,
+                                        onColorsChanged: (value) {},
                                       ),
                                     );
                                   },
@@ -495,70 +481,58 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
                         )
                       : InkWell(
                           onTap: () {
-                            // if (!mounted) return;
-                            // setState(() {
-                            //   validateAndSave();
-                            //   if (imagelinks.isNotEmpty) {
-                            //     if (pnameController.text.isEmpty ||
-                            //         ppriceController.text.isEmpty ||
-                            //         pdpriceController.text.isEmpty ||
-                            //         pbnameController.text.isEmpty ||
-                            //         pdescController.text.isEmpty ||
-                            //         selectSubCategory
-                            //             .contains("Select subcategory")) {
-                            //       ScaffoldMessenger.of(context)
-                            //         ..hideCurrentSnackBar()
-                            //         ..showSnackBar(const SnackBar(
-                            //             content:
-                            //                 Text("Please fill all the field")));
-                            //     } else {
-                            //       addProductDataToDatabase(
-                            //           imagelinks,
-                            //           pnameController.text,
-                            //           int.parse(ppriceController.text),
-                            //           int.parse(pdpriceController.text),
-                            //           pbnameController.text,
-                            //           pdescController.text,
-                            //           selectCategory,
-                            //           selectSubCategory);
-                            //     }
-                            //   } else if (files == null ||
-                            //       pnameController.text.isEmpty ||
-                            //       ppriceController.text.isEmpty ||
-                            //       pdpriceController.text.isEmpty ||
-                            //       pbnameController.text.isEmpty ||
-                            //       pdescController.text.isEmpty ||
-                            //       selectSubCategory
-                            //           .contains("Select subcategory")) {
-                            //     ScaffoldMessenger.of(context)
-                            //       ..hideCurrentSnackBar()
-                            //       ..showSnackBar(const SnackBar(
-                            //           content:
-                            //               Text("Please fill all the field")));
-                            //   } else {
-                            //     addProductDataToDatabase(
-                            //         files,
-                            //         pnameController.text,
-                            //         int.parse(ppriceController.text),
-                            //         int.parse(pdpriceController.text),
-                            //         pbnameController.text,
-                            //         pdescController.text,
-                            //         selectCategory,
-                            //         selectSubCategory);
-                            //   }
-                            // });
-                            // List uniqc = selectesColorList.toSet().toList();
-
-                            // selectesColorList.remove(2);
-                            // for (var element2 in selectesColorList) {
-                            //   for (var element in uniqc) {
-                            //     if (element2 != element) {
-                            //       uniqc.add(element2);
-                            //     }
-                            //   }
-                            // }
-                            // uniqc.addAll(uniq);
-                            // print(uniqc);
+                            if (!mounted) return;
+                            setState(() {
+                              validateAndSave();
+                              if (imagelinks.isNotEmpty) {
+                                if (pnameController.text.isEmpty ||
+                                    ppriceController.text.isEmpty ||
+                                    pdpriceController.text.isEmpty ||
+                                    pbnameController.text.isEmpty ||
+                                    pdescController.text.isEmpty ||
+                                    selectSubCategory
+                                        .contains("Select subcategory")) {
+                                  ScaffoldMessenger.of(context)
+                                    ..hideCurrentSnackBar()
+                                    ..showSnackBar(const SnackBar(
+                                        content:
+                                            Text("Please fill all the field")));
+                                } else {
+                                  addProductDataToDatabase(
+                                      imagelinks,
+                                      pnameController.text,
+                                      int.parse(ppriceController.text),
+                                      int.parse(pdpriceController.text),
+                                      pbnameController.text,
+                                      pdescController.text,
+                                      selectCategory,
+                                      selectSubCategory);
+                                }
+                              } else if (files == null ||
+                                  pnameController.text.isEmpty ||
+                                  ppriceController.text.isEmpty ||
+                                  pdpriceController.text.isEmpty ||
+                                  pbnameController.text.isEmpty ||
+                                  pdescController.text.isEmpty ||
+                                  selectSubCategory
+                                      .contains("Select subcategory")) {
+                                ScaffoldMessenger.of(context)
+                                  ..hideCurrentSnackBar()
+                                  ..showSnackBar(const SnackBar(
+                                      content:
+                                          Text("Please fill all the field")));
+                              } else {
+                                addProductDataToDatabase(
+                                    files,
+                                    pnameController.text,
+                                    int.parse(ppriceController.text),
+                                    int.parse(pdpriceController.text),
+                                    pbnameController.text,
+                                    pdescController.text,
+                                    selectCategory,
+                                    selectSubCategory);
+                              }
+                            });
                           },
                           child: Button_Style.button_Theme(
                               widget.productkey != null
@@ -620,6 +594,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
         Constants.dDesc: desc,
         Constants.dGender: category,
         Constants.dType: subCategory,
+        Constants.dOrderCount: 0,
         Constants.dDate: DateTime.now().toString(),
         Constants.dSize: selectedSize == "Yes" ? true : false,
         Constants.dColor: selectedColor == "Yes" ? true : false,
@@ -633,6 +608,13 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(onError.toString())));
       });
+      if (selectedColor.isNotEmpty) {
+        for (var i = 0; i < colorList.length; i++) {
+          databaseReference
+              .child(Constants.dColorLists)
+              .update({i.toString(): colorList[i].value}).then((value) {});
+        }
+      }
       for (var i = 0; i < imageUrls.length; i++) {
         databaseReference
             .child(Constants.dimages)
@@ -642,6 +624,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
           setState(() {
             loading = false;
           });
+
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -665,7 +648,6 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
         Constants.ddPrice: dprice,
         Constants.dBrand: bname,
         Constants.dDesc: desc,
-        Constants.dDate: DateTime.now().toString(),
         Constants.dGender: category,
         Constants.dType: subCategory,
         Constants.dSize: selectedSize == "Yes" ? true : false,
@@ -680,6 +662,13 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(onError.toString())));
       });
+      if (selectedColor.isNotEmpty) {
+        for (var i = 0; i < colorList.length; i++) {
+          databaseReference
+              .child(Constants.dColorLists)
+              .update({i.toString(): colorList[i].value}).then((value) {});
+        }
+      }
       for (var i = 0; i < imagelinks.length; i++) {
         databaseReference
             .child(Constants.dimages)

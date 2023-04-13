@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:r_dotted_line_border/r_dotted_line_border.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:synchronized/synchronized.dart';
 
 class MyAddProductPage extends StatefulWidget {
   const MyAddProductPage({
@@ -44,6 +43,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
 
   List imagelinks = [];
   List<Color> colorList = [];
+  List updateColorList = [];
 
   void validateAndSave() {
     final form = _formKey.currentState;
@@ -105,6 +105,7 @@ class _MyAddProductPageState extends State<MyAddProductPage> {
         });
       }
     });
+
     super.didChangeDependencies();
   }
 
